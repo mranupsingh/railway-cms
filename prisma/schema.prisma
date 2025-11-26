@@ -1,0 +1,253 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model coach_master {
+  fcoachno   String?
+  ocoachno   String?
+  coachno    String    @id
+  code       String?
+  mfgdt      DateTime? @db.Date
+  yrblt      BigInt?
+  make       String?
+  basedepot  String?
+  re_placed  String?
+  dt_placed  DateTime? @db.Date
+  comdt      DateTime? @db.Date
+  remaster   String?
+  books      String?
+  fund       String?
+  cost       Float?
+  type       String?
+  rakesing   String?
+  tweight    Float?
+  gen        String?
+  speed      String?
+  acnac      String?
+  lhbnlhb    String?
+  age        Float?
+  overagedt  DateTime? @db.Date
+  aboem      String?
+  bktype     String?
+  cbc        String?
+  cbcby      String?
+  cbcoem     String?
+  coupling   String?
+  corrmhrs   Float?
+  period     Float?
+  lshopoutdt DateTime? @db.Date
+  lpohby     String?
+  retpohdt   DateTime? @db.Date
+  age_rt_dt  Float?
+  dt_ioh     DateTime? @db.Date
+  ret_dt_ioh DateTime? @db.Date
+  mlrdt      DateTime? @db.Date
+  mlrby      String?
+  date_rf    DateTime? @db.Date
+  date_conv  DateTime? @db.Date
+  seat       Float?
+  berth      Float?
+  lschedule  String?
+  duesch     String?
+  ns_ss2_3   String?
+  status     String?
+  pohby      String?
+  yardindt   DateTime? @db.Date
+  shopindt   DateTime? @db.Date
+  allot      String?
+  rfid_det   String?
+  shop       String?
+  rmpu       String?
+  liftdt     DateTime? @db.Date
+  lowerdt    DateTime? @db.Date
+  reliftdt   DateTime? @db.Date
+  airbkdt    DateTime? @db.Date
+  ptindt     DateTime? @db.Date
+  rfid_dv    String?
+  rfid_nondv String?
+  ptoutdt    DateTime? @db.Date
+  cmm_mdepot String?
+  tankfitold Float?
+  tankfitnew Float?
+  tankmfg    String?
+  corrstatus String?
+  batteryld  String?
+  fanload    String?
+  lightload  String?
+  utkrisht   String?
+  lavupgrade String?
+  ventury    Float?
+  upholstry  String?
+  dyno       String?
+  cmm_depot  String?
+  h_corr     String?
+  h_corr_dt  DateTime? @db.Date
+  inissue    DateTime? @db.Date
+  remark     String?
+  workdays   Float?
+  caldays    Float?
+  dcwifit    DateTime? @db.Date
+  elecracfit DateTime? @db.Date
+  ntxrfit    DateTime? @db.Date
+  issuedt    String?
+  innhs1     String?
+  innhs1dt   DateTime? @db.Date
+  innhs2     String?
+  innhs2dt   DateTime? @db.Date
+  cond_pos   Float?
+  date_cond  String?
+  insp_dt    DateTime? @db.Date
+  ioh_by     String?
+  tnk_c_by   String?
+  other_3    String?
+  fiba       String?
+  asv        String?
+  wsp        String?
+  l_3yr_done DateTime? @db.Date
+  l_6yr_done DateTime? @db.Date
+  l_9yr_done DateTime? @db.Date
+  l_3yr_due  DateTime? @db.Date
+  l_6yr_due  DateTime? @db.Date
+  c_r        String?
+  abk        String?
+  rl         String?
+  pt         String?
+  lif        String?
+  suspension String?
+  elra       String?
+  l_9yr_due  DateTime? @db.Date
+  uphlddt    DateTime? @db.Date
+  acme       DateTime? @db.Date
+  pfs        String?
+  uphundt    DateTime? @db.Date
+  btlddt     DateTime? @db.Date
+  btundt     DateTime? @db.Date
+  bt         String?
+  uph        String?
+  rly        String?
+  ctype      String?
+  roamsdt    DateTime? @db.Date
+  bvt        String?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model history {
+  SR_NO      String?
+  FCOACHNO   String?
+  OCOACHNO   String?
+  COACHNO    String?
+  CODE       String?
+  MFGDT      DateTime? @db.Date
+  YRBLT      Decimal?  @db.Decimal
+  MAKE       String?
+  BASEDEPOT  String?
+  REMASTER   String?
+  TYPE       String?
+  RAKESING   String?
+  TWEIGHT    Decimal?  @db.Decimal
+  GEN        String?
+  SPEED      String?
+  ACNAC      String?
+  LHBNLHB    String?
+  AGE        Decimal?  @db.Decimal
+  ABOEM      String?
+  CBC        String?
+  CBCBY      String?
+  CBCOEM     String?
+  COUPLING   String?
+  CORRMHRS   Decimal?  @db.Decimal
+  PERIOD     Decimal?  @db.Decimal
+  LSHOPOUTDT DateTime? @db.Date
+  LPOHBY     String?
+  RETPOHDT   DateTime? @db.Date
+  AGE_RT_DT  Decimal?  @db.Decimal
+  DT_IOH     DateTime? @db.Date
+  RET_DT_IOH DateTime? @db.Date
+  DUESCH     String?
+  STATUS     String?
+  POHBY      String?
+  YARDINDT   DateTime? @db.Date
+  SHOPINDT   DateTime? @db.Date
+  LOC        String?
+  SHOP       String?
+  MECHSUP    String?
+  LIFTDT     DateTime? @db.Date
+  LOWERDT    DateTime? @db.Date
+  RELIFTDT   DateTime? @db.Date
+  AIRBKDT    DateTime? @db.Date
+  PTINDT     DateTime? @db.Date
+  HPPTOUTDT  DateTime? @db.Date
+  HPPTINDT   DateTime? @db.Date
+  PTOUTDT    DateTime? @db.Date
+  INSHOP_POS String?
+  TANKFITOLD Decimal?  @db.Decimal
+  TANKFITNEW Decimal?  @db.Decimal
+  RMPUDT     DateTime? @db.Date
+  CORRSTATUS String?
+  BATTERYLD  String?
+  FANLOAD    String?
+  LIGHTLOAD  String?
+  UTKRISHT   String?
+  LAVUPGRADE String?
+  VENTURY    Decimal?  @db.Decimal
+  UPHOLSTRY  String?
+  DYNO       String?
+  EPOXY      String?
+  H_CORR     String?
+  H_CORR_DT  DateTime? @db.Date
+  INISSUE    DateTime? @db.Date
+  REMARK     String?
+  DATE_COND  DateTime? @db.Date
+  WORKDAYS   Decimal?  @db.Decimal
+  CALDAYS    Decimal?  @db.Decimal
+  DCWIFIT    DateTime? @db.Date
+  ELECRACFIT DateTime? @db.Date
+  NTXRFIT    DateTime? @db.Date
+  ISSUEDT    DateTime? @db.Date
+  COND_POS   Decimal?  @db.Decimal
+  COND_BY    String?
+  SERVICE    Decimal?  @db.Decimal
+  RSP        String?
+  C_R        DateTime? @db.Date
+  OTHER_3    String?
+  COST       Decimal?  @db.Decimal
+  FUND       String?
+  MEMO       String?
+  SEAT       Decimal?  @db.Decimal
+  BERTH      Decimal?  @db.Decimal
+  CTYPE      String?
+  ROAMSDT    DateTime? @db.Date
+  ACME       DateTime? @db.Date
+  INSP_DT    DateTime? @db.Date
+  ROAMSOUTDT DateTime? @db.Date
+
+  @@ignore
+}
+
+model route_access_control {
+  id              Int       @id @default(autoincrement())
+  route_path      String    @unique @db.VarChar(255)
+  access_password String    @db.VarChar(255)
+  is_active       Boolean?  @default(true)
+  created_at      DateTime? @default(now()) @db.Timestamp(6)
+  updated_at      DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model users {
+  id         Int       @id @default(autoincrement())
+  login_id   String    @unique @db.VarChar(255)
+  username   String    @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  email      String?   @unique @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([email], map: "idx_users_email")
+  @@index([login_id], map: "idx_users_login_id")
+}
