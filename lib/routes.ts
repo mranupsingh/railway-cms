@@ -20,6 +20,7 @@ export const ROUTE = {
     LOGIN: '/login',
     DASHBOARD: '/dashboard',
     MASTER_REPORT: '/master-report',
+    HISTORY_REPORT: '/history-report',
 } as const
 type Routes = typeof ROUTE[keyof typeof ROUTE]
 
