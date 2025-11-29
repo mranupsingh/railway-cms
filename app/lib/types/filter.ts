@@ -22,6 +22,7 @@ export interface FilterCondition {
     value: string;
     valueTo?: string; // For dateRange or range operations
     logicalOperator: FilterLogicalOperator;
+    type?: ColumnType;
 }
 
 export interface AdvancedFilterState {

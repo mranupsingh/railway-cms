@@ -87,7 +87,7 @@ export function buildWhereClauseFromFilters(conditions: FilterCondition[]) {
 }
 
 function buildSingleCondition(condition: FilterCondition) {
-    const { column, operator, value, valueTo } = condition;
+    const { column, operator, value, valueTo, type } = condition;
 
     // Handle empty/not empty which don't need values
     if (operator === 'isEmpty') {
@@ -104,27 +104,37 @@ function buildSingleCondition(condition: FilterCondition) {
         };
     }
 
-    // Parse value based on expected type (simplified)
-    // In a real app, we'd look up the column type schema
-    // For now, we'll try to infer or use string for everything and let Prisma/DB coerce if possible
-    // OR we assume string for text, number for numeric columns.
-
-    // We need to handle dates specifically
-    const isDateOp = ['dateRange'].includes(operator) || !isNaN(Date.parse(value)) && value.includes('-');
-
     let parsedValue: any = value;
 
-    // Basic type inference
-    if (!isNaN(Number(value)) && value.trim() !== '' && !value.includes('-')) {
-        // It's a number
-        parsedValue = Number(value);
-    } else if (value === 'true') {
-        parsedValue = true;
-    } else if (value === 'false') {
-        parsedValue = false;
-    } else if (isDateOp || !isNaN(Date.parse(value))) {
-        // It's likely a date
-        parsedValue = new Date(value);
+    // Use explicit type if available, otherwise fall back to inference
+    if (type) {
+        if (type === 'number') {
+            parsedValue = Number(value);
+        } else if (type === 'boolean') {
+            parsedValue = value === 'true';
+        } else if (type === 'date') {
+            parsedValue = new Date(value);
+        } else {
+            // string
+            parsedValue = value;
+        }
+    } else {
+        // Legacy inference logic
+        // We need to handle dates specifically
+        const isDateOp = ['dateRange'].includes(operator) || !isNaN(Date.parse(value)) && value.includes('-');
+
+        // Basic type inference
+        if (!isNaN(Number(value)) && value.trim() !== '' && !value.includes('-')) {
+            // It's a number
+            parsedValue = Number(value);
+        } else if (value === 'true') {
+            parsedValue = true;
+        } else if (value === 'false') {
+            parsedValue = false;
+        } else if (isDateOp || !isNaN(Date.parse(value))) {
+            // It's likely a date
+            parsedValue = new Date(value);
+        }
     }
 
     switch (operator) {

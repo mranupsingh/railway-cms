@@ -17,7 +17,7 @@ export async function getCoachMasterData(params: CoachMasterQueryParams = {}): P
 
         return unwrapApiResponse<CoachMasterReportInfo>(response)
 
-    }, 'loginAction')
+    }, 'getMasterDataAction')
 
     if (!result.success) {
         console.log(result.error)
@@ -35,7 +35,7 @@ export async function updateCoachMaster(coachno: string, data: Partial<any>): Pr
         );
 
         return unwrapApiResponse<any>(response)
-    }, 'updateCoachMasterAction')
+    }, 'updateMasterDataAction')
 
     if (!result.success) {
         console.log(result.error)

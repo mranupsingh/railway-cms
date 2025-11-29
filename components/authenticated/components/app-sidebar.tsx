@@ -161,12 +161,12 @@ const data = {
   documents: [
     {
       title: "Master Report",
-      url: ROUTE.MASTER_REPORT,
+      url: ROUTE.MASTER_RECORD,
       icon: DatabaseIcon,
     },
     {
       title: "History Report",
-      url: ROUTE.HISTORY_REPORT,
+      url: ROUTE.HISTORY_RECORD,
       icon: DatabaseIcon,
     }
   ],

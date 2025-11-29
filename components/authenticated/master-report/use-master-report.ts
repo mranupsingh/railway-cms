@@ -1,5 +1,5 @@
-import { getCoachMasterData, updateCoachMaster } from '@/app/(authenticated)/master-report/actions';
-import { CoachMasterQueryParams, MASTER_RECORD_QUERY_KEY } from '@/app/(authenticated)/master-report/types';
+import { getCoachMasterData, updateCoachMaster } from '@/app/(authenticated)/master-record/actions';
+import { CoachMasterQueryParams, MASTER_RECORD_QUERY_KEY } from '@/app/(authenticated)/master-record/types';
 import { showToast } from '@/components/ui/sonner';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 

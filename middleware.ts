@@ -57,5 +57,7 @@ export const config = {
         '/login',
 
         '/dashboard',
+        '/master-record',
+        '/history-record',
     ],
 };
