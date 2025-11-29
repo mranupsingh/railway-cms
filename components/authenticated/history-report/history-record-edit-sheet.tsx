@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
-import { History } from "@/app/(authenticated)/history-report/types"
+import { History } from "@/app/(authenticated)/history-record/types"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -86,6 +86,17 @@ export function HistoryRecordEditSheet({
         if (!history) return;
 
         const cleanedValues = { ...values };
+
+        // Fix date timezone issues by converting to UTC date string
+        Object.keys(cleanedValues).forEach(key => {
+            if (isDateField(key) && cleanedValues[key] instanceof Date) {
+                const date = cleanedValues[key];
+                // Create a UTC date that matches the local date
+                // This ensures 31st Dec local becomes 31st Dec UTC
+                const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+                cleanedValues[key] = utcDate;
+            }
+        });
 
         updateHistory.mutate({
             id: history.id,

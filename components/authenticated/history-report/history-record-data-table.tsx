@@ -22,7 +22,7 @@ import {
 } from "lucide-react"
 import * as React from "react"
 
-import { History } from "@/app/(authenticated)/history-report/types"
+import { History } from "@/app/(authenticated)/history-record/types"
 import { DataTableViewOptions } from "@/components/authenticated/components/data-table-view-options"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

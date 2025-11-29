@@ -13,6 +13,44 @@ export async function PATCH(
         // Remove fields that shouldn't be updated or are primary keys if present
         delete body.coachno;
 
+        // Define numeric fields for conversion
+        const numericFields = [
+            'yrblt', 'cost', 'tweight', 'age', 'corrmhrs', 'period', 'age_rt_dt',
+            'seat', 'berth', 'tankfitold', 'tankfitnew', 'ventury', 'workdays',
+            'caldays', 'cond_pos'
+        ];
+
+        // Define date fields for conversion (handle empty strings)
+        const dateFields = [
+            'mfgdt', 'dt_placed', 'comdt', 'overagedt', 'lshopoutdt', 'retpohdt',
+            'dt_ioh', 'ret_dt_ioh', 'mlrdt', 'date_rf', 'date_conv', 'yardindt',
+            'shopindt', 'liftdt', 'lowerdt', 'reliftdt', 'airbkdt', 'ptindt',
+            'ptoutdt', 'h_corr_dt', 'inissue', 'dcwifit', 'elecracfit', 'ntxrfit',
+            'innhs1dt', 'innhs2dt', 'insp_dt', 'l_3yr_done', 'l_6yr_done',
+            'l_9yr_done', 'l_3yr_due', 'l_6yr_due', 'l_9yr_due', 'uphlddt',
+            'acme', 'uphundt', 'btlddt', 'btundt', 'roamsdt'
+        ];
+
+        // Process body to convert types
+        for (const key of Object.keys(body)) {
+            const value = body[key];
+
+            if (numericFields.includes(key)) {
+                if (value === '' || value === null || value === undefined) {
+                    body[key] = null;
+                } else {
+                    const num = Number(value);
+                    body[key] = isNaN(num) ? null : num;
+                }
+            } else if (dateFields.includes(key)) {
+                if (value === '' || value === null || value === undefined) {
+                    body[key] = null;
+                }
+                // Prisma handles ISO date strings correctly, so no need to convert to Date object explicitly
+                // unless it's a non-standard format.
+            }
+        }
+
         // Update the record
         const updatedCoach = await prisma.coach_master.update({
             where: {

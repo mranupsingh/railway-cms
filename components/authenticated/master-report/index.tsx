@@ -1,6 +1,6 @@
 'use client';
 
-import { CoachMasterQueryParams } from '@/app/(authenticated)/master-report/types';
+import { CoachMasterQueryParams } from '@/app/(authenticated)/master-record/types';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useState, useEffect } from 'react';
 import { MasterRecordDataTable } from './master-record-data-table';

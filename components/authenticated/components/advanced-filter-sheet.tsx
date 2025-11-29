@@ -60,6 +60,7 @@ export function AdvancedFilterSheet({
             operator: 'contains',
             value: '',
             logicalOperator: 'AND',
+            type: firstColumn.type,
         }
         setConditions([...conditions, newCondition])
     }
@@ -82,6 +83,7 @@ export function AdvancedFilterSheet({
                             updated.operator = ops[0]
                             updated.value = ''
                             updated.valueTo = undefined
+                            updated.type = col.type
                         }
                     }
 

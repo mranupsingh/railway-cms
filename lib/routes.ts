@@ -1,6 +1,7 @@
 export type RouteInfoValueProps = {
     segment: Routes,
-    type: RouteAccessType
+    type: RouteAccessType,
+    title: string
 }
 
 export type MixedRouteProperties = {
@@ -19,15 +20,17 @@ export const ROUTE = {
     HOME: '/',
     LOGIN: '/login',
     DASHBOARD: '/dashboard',
-    MASTER_REPORT: '/master-report',
-    HISTORY_REPORT: '/history-report',
+    MASTER_RECORD: '/master-record',
+    HISTORY_RECORD: '/history-record',
 } as const
-type Routes = typeof ROUTE[keyof typeof ROUTE]
+export type Routes = typeof ROUTE[keyof typeof ROUTE]
 
 export const RouteInfo = new Map<Routes, RouteInfoValueProps>([
-    [ROUTE.HOME, { segment: ROUTE.HOME, type: ROUTE_ACCESS.PROTECTED }],
-    [ROUTE.LOGIN, { segment: ROUTE.LOGIN, type: ROUTE_ACCESS.PUBLIC }],
-    [ROUTE.DASHBOARD, { segment: ROUTE.DASHBOARD, type: ROUTE_ACCESS.PROTECTED }],
+    [ROUTE.HOME, { segment: ROUTE.HOME, type: ROUTE_ACCESS.PROTECTED, title: 'Home' }],
+    [ROUTE.LOGIN, { segment: ROUTE.LOGIN, type: ROUTE_ACCESS.PUBLIC, title: 'Login' }],
+    [ROUTE.DASHBOARD, { segment: ROUTE.DASHBOARD, type: ROUTE_ACCESS.PROTECTED, title: 'Dashboard' }],
+    [ROUTE.MASTER_RECORD, { segment: ROUTE.MASTER_RECORD, type: ROUTE_ACCESS.PROTECTED, title: 'Master Record' }],
+    [ROUTE.HISTORY_RECORD, { segment: ROUTE.HISTORY_RECORD, type: ROUTE_ACCESS.PROTECTED, title: 'History Record' }],
 ]);
 
 // Precompute once at startup

@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 
 export default async function HistoryRecordPage() {
     const queryClient = new QueryClient();
-    console.log('ssr - ', [HISTORY_QUERY_KEY, { page: 1, pageSize: 10 }]);
 
     await queryClient.prefetchQuery({
         queryKey: [HISTORY_QUERY_KEY, { page: 1, pageSize: 10 }],

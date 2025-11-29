@@ -1,6 +1,6 @@
 'use client';
 
-import { HistoryQueryParams } from '@/app/(authenticated)/history-report/types';
+import { HistoryQueryParams } from '@/app/(authenticated)/history-record/types';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useState, useEffect } from 'react';
 import { HistoryRecordDataTable } from './history-record-data-table';

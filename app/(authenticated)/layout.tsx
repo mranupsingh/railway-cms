@@ -1,12 +1,10 @@
 import { cookies } from "next/headers"
 
-import {
-    SidebarInset,
-    SidebarProvider,
-} from "@/components/ui/sidebar"
 import { getUserInfo } from "@/app/actions"
 import { AppSidebar } from "@/components/authenticated/components/app-sidebar"
-import { SiteHeader } from "@/components/authenticated/components/site-header"
+import {
+    SidebarProvider
+} from "@/components/ui/sidebar"
 
 export default async function AuthenticatedLayout({
     children,
@@ -15,7 +13,6 @@ export default async function AuthenticatedLayout({
 }) {
     const cookieStore = await cookies()
     const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
-    const theme = cookieStore.get("theme")?.value || "light"
     const userInfo = await getUserInfo()
 
     return (
@@ -28,10 +25,7 @@ export default async function AuthenticatedLayout({
             }
         >
             <AppSidebar variant="inset" userInfo={userInfo} />
-            <SidebarInset>
-                <SiteHeader theme={theme} />
-                <div className="flex flex-1 flex-col">{children}</div>
-            </SidebarInset>
+            {children}
         </SidebarProvider>
     )
 }
