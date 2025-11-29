@@ -2,7 +2,7 @@
 
 import { CoachMasterQueryParams } from '@/app/(authenticated)/master-report/types';
 import { useDebounce } from '@/hooks/use-debounce';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MasterRecordDataTable } from './master-record-data-table';
 import { useCoachMaster } from './use-master-report';
 
@@ -14,6 +14,11 @@ export function MasterRecordTable() {
         pageIndex: 0,
         pageSize: 10,
     });
+
+    // Reset to page 1 when search query changes
+    useEffect(() => {
+        setPagination(prev => ({ ...prev, pageIndex: 0 }));
+    }, [debouncedSearch]);
 
     const queryParams: CoachMasterQueryParams = {
         page: pagination.pageIndex + 1,

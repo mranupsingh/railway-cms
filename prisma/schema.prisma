@@ -136,7 +136,6 @@ model coach_master {
   bvt        String?
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model history {
   SR_NO      String?
   FCOACHNO   String?
@@ -226,8 +225,9 @@ model history {
   ACME       DateTime? @db.Date
   INSP_DT    DateTime? @db.Date
   ROAMSOUTDT DateTime? @db.Date
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  @@ignore
+  @@index([id], map: "idx_history_id")
 }
 
 model route_access_control {

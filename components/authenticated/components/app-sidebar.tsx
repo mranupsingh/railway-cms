@@ -166,7 +166,7 @@ const data = {
     },
     {
       title: "History Report",
-      url: "#",
+      url: ROUTE.HISTORY_REPORT,
       icon: DatabaseIcon,
     }
   ],
