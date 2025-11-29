@@ -38,6 +38,14 @@ const MASTER_FIELDS = [
 ];
 
 // Helper to check if a field is a date field
+const isNumberField = (key: string) => {
+    return [
+        "yrblt", "cost", "tweight", "age", "corrmhrs", "period", "age_rt_dt",
+        "seat", "berth", "tankfitold", "tankfitnew", "ventury", "workdays",
+        "caldays", "cond_pos"
+    ].includes(key);
+}
+
 const isDateField = (key: string) => {
     return [
         "mfgdt", "dt_placed", "comdt", "overagedt", "lshopoutdt", "retpohdt",
@@ -48,6 +56,14 @@ const isDateField = (key: string) => {
         "l_9yr_done", "l_3yr_due", "l_6yr_due", "l_9yr_due", "uphlddt",
         "acme", "uphundt", "btlddt", "btundt", "roamsdt"
     ].includes(key);
+}
+
+const getInputType = (key: string): "text" | "number" => {
+    return isNumberField(key) ? "number" : "text";
+}
+
+const blockInvalidChar = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault();
 }
 
 // Create a schema that allows any string/number/date for simplicity, 
@@ -158,7 +174,9 @@ export function MasterRecordEditSheet({
                                             name={field}
                                             render={({ field: formField }) => (
                                                 <FormItem>
-                                                    <FormLabel className="capitalize font-medium text-muted-foreground">{field.replace(/_/g, ' ')}</FormLabel>
+                                                    <FormLabel className="capitalize font-medium text-muted-foreground">
+                                                        {field.replace(/_/g, ' ')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         {isDateField(field) ? (
                                                             <DatePicker
@@ -166,7 +184,19 @@ export function MasterRecordEditSheet({
                                                                 onChange={formField.onChange}
                                                             />
                                                         ) : (
-                                                            <Input {...formField} value={formField.value || ''} className="bg-background" />
+                                                            <Input
+                                                                {...formField}
+                                                                type={getInputType(field)}
+                                                                value={formField.value || ''}
+                                                                className="bg-background"
+                                                                {...getInputType(field) === 'number' && { onKeyDown: blockInvalidChar }}
+                                                                {...getInputType(field) === 'number' && {
+                                                                    onChange: (e) => {
+                                                                        const value = e.target.value.replace(/[^0-9.]/g, '');
+                                                                        formField.onChange(value);
+                                                                    }
+                                                                }}
+                                                            />
                                                         )}
                                                     </FormControl>
                                                     <FormMessage />
@@ -191,7 +221,9 @@ export function MasterRecordEditSheet({
                                             name={field}
                                             render={({ field: formField }) => (
                                                 <FormItem>
-                                                    <FormLabel className="capitalize font-medium text-muted-foreground">{field.replace(/_/g, ' ')}</FormLabel>
+                                                    <FormLabel className="capitalize font-medium text-muted-foreground">
+                                                        {field.replace(/_/g, ' ')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         {isDateField(field) ? (
                                                             <DatePicker
@@ -199,7 +231,11 @@ export function MasterRecordEditSheet({
                                                                 onChange={formField.onChange}
                                                             />
                                                         ) : (
-                                                            <Input {...formField} value={formField.value || ''} />
+                                                            <Input
+                                                                {...formField}
+                                                                type={getInputType(field)}
+                                                                value={formField.value || ''}
+                                                            />
                                                         )}
                                                     </FormControl>
                                                     <FormMessage />
