@@ -2,10 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { getHistoryData, updateHistory } from "@/app/(authenticated)/history-report/actions";
-import { HistoryQueryParams } from "@/app/(authenticated)/history-report/types";
+import { HISTORY_QUERY_KEY, HistoryQueryParams } from "@/app/(authenticated)/history-report/types";
 import { toast } from "sonner";
-
-export const HISTORY_QUERY_KEY = "history";
 
 export function useHistory(params: HistoryQueryParams = {}) {
     return useQuery({

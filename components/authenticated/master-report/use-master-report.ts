@@ -1,13 +1,11 @@
 import { getCoachMasterData, updateCoachMaster } from '@/app/(authenticated)/master-report/actions';
-import { CoachMasterQueryParams } from '@/app/(authenticated)/master-report/types';
+import { CoachMasterQueryParams, MASTER_RECORD_QUERY_KEY } from '@/app/(authenticated)/master-report/types';
 import { showToast } from '@/components/ui/sonner';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const COACH_MASTER_QUERY_KEY = 'coach-master';
-
-export function useCoachMaster(params: CoachMasterQueryParams = {}) {
+export function useMasterRecord(params: CoachMasterQueryParams = {}) {
     return useQuery({
-        queryKey: [COACH_MASTER_QUERY_KEY, params],
+        queryKey: [MASTER_RECORD_QUERY_KEY, params],
         queryFn: async () => {
             const result = await getCoachMasterData(params);
 
@@ -34,7 +32,7 @@ export function useUpdateCoachMaster() {
             return result.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [COACH_MASTER_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: [MASTER_RECORD_QUERY_KEY] });
             showToast('Coach updated successfully', { variant: 'success' });
         },
         onError: (error) => {

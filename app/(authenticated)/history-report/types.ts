@@ -109,4 +109,7 @@ export type HistoryQueryParams = {
     type?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
+    filters?: string; // JSON string of FilterCondition[]
 };
+
+export const HISTORY_QUERY_KEY = "history-record";

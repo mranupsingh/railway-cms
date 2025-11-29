@@ -1,6 +1,8 @@
 import '@/lib/bigint-serializer';
 import prisma from '@/lib/db/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { buildWhereClauseFromFilters } from '@/app/lib/db/filter-utils';
+import { FilterCondition } from '@/app/lib/types/filter';
 
 export async function GET(request: NextRequest) {
     try {
@@ -16,13 +18,25 @@ export async function GET(request: NextRequest) {
         const status = searchParams.get('status');
         const basedepot = searchParams.get('basedepot');
         const type = searchParams.get('type');
+        const filtersParam = searchParams.get('filters');
 
         // Sorting
         const sortBy = searchParams.get('sortBy') || 'COACHNO';
         const sortOrder = (searchParams.get('sortOrder') || 'asc') as 'asc' | 'desc';
 
         // Build where clause
-        const where: any = {};
+        let where: any = {};
+
+        // Handle advanced filters
+        if (filtersParam) {
+            try {
+                const conditions: FilterCondition[] = JSON.parse(filtersParam);
+                const advancedWhere = buildWhereClauseFromFilters(conditions);
+                where = { ...where, ...advancedWhere };
+            } catch (e) {
+                console.error('Error parsing filters:', e);
+            }
+        }
 
         if (coachno) {
             where.COACHNO = {

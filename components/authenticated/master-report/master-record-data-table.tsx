@@ -44,6 +44,10 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { MasterRecordEditSheet } from "./master-record-edit-sheet"
+import { AdvancedFilterSheet } from "@/components/authenticated/components/advanced-filter-sheet"
+import { FilterCondition } from "@/app/lib/types/filter"
+import { FilterIcon } from "lucide-react"
+import { masterFilterableColumns } from "./filterable-columns"
 
 // Helper function to format dates
 function formatDate(date: Date | string | null): string {
@@ -354,6 +358,8 @@ interface DataTableProps {
     isLoading?: boolean;
     searchQuery: string;
     onSearchChange: (value: string) => void;
+    advancedFilters: FilterCondition[];
+    onAdvancedFiltersChange: (filters: FilterCondition[]) => void;
 }
 
 export function MasterRecordDataTable({
@@ -366,6 +372,8 @@ export function MasterRecordDataTable({
     isLoading = false,
     searchQuery,
     onSearchChange,
+    advancedFilters,
+    onAdvancedFiltersChange,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
@@ -489,6 +497,9 @@ export function MasterRecordDataTable({
     const [editingCoach, setEditingCoach] = React.useState<CoachMaster | null>(null)
     const [isEditSheetOpen, setIsEditSheetOpen] = React.useState(false)
 
+    // Filter Sheet State
+    const [isFilterSheetOpen, setIsFilterSheetOpen] = React.useState(false)
+
     const handleEdit = (coach: CoachMaster) => {
         setEditingCoach(coach)
         setIsEditSheetOpen(true)
@@ -559,7 +570,23 @@ export function MasterRecordDataTable({
                     className="h-9 max-w-sm"
                 />
 
-                <DataTableViewOptions table={table} />
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsFilterSheetOpen(true)}
+                        className="h-9"
+                    >
+                        <FilterIcon className="mr-2 h-4 w-4" />
+                        Filters
+                        {advancedFilters.length > 0 && (
+                            <Badge variant="secondary" className="ml-2 rounded-sm px-1 font-normal">
+                                {advancedFilters.length}
+                            </Badge>
+                        )}
+                    </Button>
+                    <DataTableViewOptions table={table} />
+                </div>
             </div>
 
             {/* Table */}
@@ -728,6 +755,14 @@ export function MasterRecordDataTable({
                 open={isEditSheetOpen}
                 onOpenChange={setIsEditSheetOpen}
                 coach={editingCoach}
+            />
+
+            <AdvancedFilterSheet
+                open={isFilterSheetOpen}
+                onOpenChange={setIsFilterSheetOpen}
+                columns={masterFilterableColumns}
+                onApplyFilters={onAdvancedFiltersChange}
+                initialConditions={advancedFilters}
             />
         </div>
     )

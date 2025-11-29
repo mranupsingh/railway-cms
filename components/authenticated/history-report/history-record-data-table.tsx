@@ -44,6 +44,10 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { HistoryRecordEditSheet } from "./history-record-edit-sheet"
+import { AdvancedFilterSheet } from "@/components/authenticated/components/advanced-filter-sheet"
+import { FilterCondition } from "@/app/lib/types/filter"
+import { FilterIcon } from "lucide-react"
+import { historyFilterableColumns } from "./filterable-columns"
 
 // Helper function to format dates
 function formatDate(date: Date | string | null): string {
@@ -320,6 +324,8 @@ interface DataTableProps {
     isLoading?: boolean;
     searchQuery: string;
     onSearchChange: (value: string) => void;
+    advancedFilters: FilterCondition[];
+    onAdvancedFiltersChange: (filters: FilterCondition[]) => void;
 }
 
 export function HistoryRecordDataTable({
@@ -332,6 +338,8 @@ export function HistoryRecordDataTable({
     isLoading = false,
     searchQuery,
     onSearchChange,
+    advancedFilters,
+    onAdvancedFiltersChange,
 }: DataTableProps) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
@@ -418,6 +426,9 @@ export function HistoryRecordDataTable({
     const [editingHistory, setEditingHistory] = React.useState<History | null>(null)
     const [isEditSheetOpen, setIsEditSheetOpen] = React.useState(false)
 
+    // Filter Sheet State
+    const [isFilterSheetOpen, setIsFilterSheetOpen] = React.useState(false)
+
     const handleEdit = (history: History) => {
         setEditingHistory(history)
         setIsEditSheetOpen(true)
@@ -488,7 +499,23 @@ export function HistoryRecordDataTable({
                     className="h-9 max-w-sm"
                 />
 
-                <DataTableViewOptions table={table} />
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsFilterSheetOpen(true)}
+                        className="h-9"
+                    >
+                        <FilterIcon className="mr-2 h-4 w-4" />
+                        Filters
+                        {advancedFilters.length > 0 && (
+                            <Badge variant="secondary" className="ml-2 rounded-sm px-1 font-normal">
+                                {advancedFilters.length}
+                            </Badge>
+                        )}
+                    </Button>
+                    <DataTableViewOptions table={table} />
+                </div>
             </div>
 
             {/* Table */}
@@ -657,6 +684,14 @@ export function HistoryRecordDataTable({
                 open={isEditSheetOpen}
                 onOpenChange={setIsEditSheetOpen}
                 history={editingHistory}
+            />
+
+            <AdvancedFilterSheet
+                open={isFilterSheetOpen}
+                onOpenChange={setIsFilterSheetOpen}
+                columns={historyFilterableColumns}
+                onApplyFilters={onAdvancedFiltersChange}
+                initialConditions={advancedFilters}
             />
         </div>
     )
