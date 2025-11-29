@@ -36,7 +36,16 @@ const KEY_FIELDS = [
     "SHOP", "REMARK"
 ];
 
-// Helper to check if a field is a date field
+// Helper to check if a field is a number field (Decimal type in schema)
+const isNumberField = (key: string) => {
+    return [
+        "YRBLT", "TWEIGHT", "AGE", "CORRMHRS", "PERIOD", "AGE_RT_DT",
+        "TANKFITOLD", "TANKFITNEW", "VENTURY", "WORKDAYS", "CALDAYS",
+        "COND_POS", "SERVICE", "COST", "SEAT", "BERTH"
+    ].includes(key);
+}
+
+// Helper to check if a field is a date field (DateTime type in schema)
 const isDateField = (key: string) => {
     return [
         "MFGDT", "LSHOPOUTDT", "RETPOHDT", "DT_IOH", "RET_DT_IOH", "YARDINDT",
@@ -45,6 +54,16 @@ const isDateField = (key: string) => {
         "DATE_COND", "DCWIFIT", "ELECRACFIT", "NTXRFIT", "ISSUEDT", "C_R",
         "ROAMSDT", "ACME", "INSP_DT", "ROAMSOUTDT"
     ].includes(key);
+}
+
+// Get input type based on field
+const getInputType = (key: string): "text" | "number" => {
+    return isNumberField(key) ? "number" : "text";
+}
+
+// Block invalid characters for number inputs
+const blockInvalidChar = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault();
 }
 
 const formSchema = z.record(z.string(), z.any())
@@ -141,7 +160,9 @@ export function HistoryRecordEditSheet({
                                             name={field}
                                             render={({ field: formField }) => (
                                                 <FormItem>
-                                                    <FormLabel className="capitalize font-medium text-muted-foreground">{field.replace(/_/g, ' ')}</FormLabel>
+                                                    <FormLabel className="capitalize font-medium text-muted-foreground">
+                                                        {field.replace(/_/g, ' ')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         {isDateField(field) ? (
                                                             <DatePicker
@@ -149,7 +170,19 @@ export function HistoryRecordEditSheet({
                                                                 onChange={formField.onChange}
                                                             />
                                                         ) : (
-                                                            <Input {...formField} value={formField.value || ''} className="bg-background" />
+                                                            <Input
+                                                                {...formField}
+                                                                type={getInputType(field)}
+                                                                value={formField.value || ''}
+                                                                className="bg-background"
+                                                                {...(getInputType(field) === 'number' && { onKeyDown: blockInvalidChar })}
+                                                                {...(getInputType(field) === 'number' && {
+                                                                    onChange: (e) => {
+                                                                        const value = e.target.value.replace(/[^0-9.]/g, '');
+                                                                        formField.onChange(value);
+                                                                    }
+                                                                })}
+                                                            />
                                                         )}
                                                     </FormControl>
                                                     <FormMessage />
@@ -174,7 +207,9 @@ export function HistoryRecordEditSheet({
                                             name={field}
                                             render={({ field: formField }) => (
                                                 <FormItem>
-                                                    <FormLabel className="capitalize font-medium text-muted-foreground">{field.replace(/_/g, ' ')}</FormLabel>
+                                                    <FormLabel className="capitalize font-medium text-muted-foreground">
+                                                        {field.replace(/_/g, ' ')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         {isDateField(field) ? (
                                                             <DatePicker
@@ -182,7 +217,18 @@ export function HistoryRecordEditSheet({
                                                                 onChange={formField.onChange}
                                                             />
                                                         ) : (
-                                                            <Input {...formField} value={formField.value || ''} />
+                                                            <Input
+                                                                {...formField}
+                                                                type={getInputType(field)}
+                                                                value={formField.value || ''}
+                                                                {...(getInputType(field) === 'number' && { onKeyDown: blockInvalidChar })}
+                                                                {...(getInputType(field) === 'number' && {
+                                                                    onChange: (e) => {
+                                                                        const value = e.target.value.replace(/[^0-9.]/g, '');
+                                                                        formField.onChange(value);
+                                                                    }
+                                                                })}
+                                                            />
                                                         )}
                                                     </FormControl>
                                                     <FormMessage />
