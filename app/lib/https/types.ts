@@ -24,18 +24,20 @@ export enum ApiVersion {
 }
 
 export interface PaginationMeta {
-    total: number;
     page: number;
-    limit: number;
+    pageSize: number;
+    total: number;
     totalPages: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
 }
 
 export interface GenericApiResponse<T> {
     statusCode: number;
     success: boolean;
     message?: string;
+    data: T;
+}
+
+export interface UnwrappedResponse<T> {
     data: T;
     meta?: PaginationMeta;
 }

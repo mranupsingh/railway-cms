@@ -2,6 +2,13 @@ import { SectionCards } from "@/components/authenticated/components/section-card
 import data from "./data.json"
 import { ChartAreaInteractive } from "@/components/authenticated/components/chart-area-interactive"
 import { DataTable } from "@/components/authenticated/components/data-table"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+    title: "Dashboard | Railway CMS",
+    description: "Railway coach management system dashboard. View analytics, statistics, and recent coach activities at a glance.",
+    keywords: ["railway", "dashboard", "coach management", "analytics", "statistics", "railway cms", "train coaches"],
+}
 
 export default function DashboardPage() {
     return (

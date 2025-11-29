@@ -1,4 +1,4 @@
-import { ApiError, ApiResponse } from "./types";
+import { ApiError, ApiResponse, UnwrappedResponse } from "./types";
 
 export function handleApiError(error: any): never {
     const message = error?.response?.data?.message || error?.message || "Unknown API error";
@@ -26,7 +26,7 @@ export function unwrapApiResponse<T>(response: ApiResponse<any>): T {
         throw new Error(apiResponse?.message || 'API request failed');
     }
 
-    return apiResponse.data;
+    return apiResponse.data
 }
 
 export function isApiError(error: any): error is ApiError {
