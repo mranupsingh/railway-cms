@@ -145,4 +145,7 @@ export type CoachMasterQueryParams = {
     type?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
+    filters?: string; // JSON string of FilterCondition[]
 };
+
+export const MASTER_RECORD_QUERY_KEY = 'master-record';

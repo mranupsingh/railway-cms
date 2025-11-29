@@ -4,11 +4,13 @@ import { CoachMasterQueryParams } from '@/app/(authenticated)/master-report/type
 import { useDebounce } from '@/hooks/use-debounce';
 import { useState, useEffect } from 'react';
 import { MasterRecordDataTable } from './master-record-data-table';
-import { useCoachMaster } from './use-master-report';
+import { useMasterRecord } from './use-master-report';
+import { FilterCondition } from '@/app/lib/types/filter';
 
 export function MasterRecordTable() {
     const [searchQuery, setSearchQuery] = useState("");
     const debouncedSearch = useDebounce(searchQuery, 500);
+    const [advancedFilters, setAdvancedFilters] = useState<FilterCondition[]>([]);
 
     const [pagination, setPagination] = useState({
         pageIndex: 0,
@@ -20,13 +22,19 @@ export function MasterRecordTable() {
         setPagination(prev => ({ ...prev, pageIndex: 0 }));
     }, [debouncedSearch]);
 
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setPagination(prev => ({ ...prev, pageIndex: 0 }));
+    }, [advancedFilters]);
+
     const queryParams: CoachMasterQueryParams = {
         page: pagination.pageIndex + 1,
         pageSize: pagination.pageSize,
-        coachno: debouncedSearch || undefined,
+        ...(debouncedSearch && { coachno: debouncedSearch }),
+        ...(advancedFilters.length > 0 && { filters: JSON.stringify(advancedFilters) }),
     };
 
-    const { data, isLoading, error } = useCoachMaster(queryParams);
+    const { data, isLoading, error } = useMasterRecord(queryParams);
 
     if (error) {
         return (
@@ -56,6 +64,8 @@ export function MasterRecordTable() {
             isLoading={isLoading}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
+            advancedFilters={advancedFilters}
+            onAdvancedFiltersChange={setAdvancedFilters}
         />
     );
 }

@@ -1,8 +1,8 @@
-import { HISTORY_QUERY_KEY } from '@/components/authenticated/history-report/use-history-report';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { getHistoryData } from './actions';
 import { HistoryRecordTable } from '@/components/authenticated/history-report';
 import { Metadata } from 'next';
+import { HISTORY_QUERY_KEY } from './types';
 
 export const metadata: Metadata = {
     title: "History Record | Railway CMS",
@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 export default async function HistoryRecordPage() {
     const queryClient = new QueryClient();
+    console.log('ssr - ', [HISTORY_QUERY_KEY, { page: 1, pageSize: 10 }]);
 
     await queryClient.prefetchQuery({
         queryKey: [HISTORY_QUERY_KEY, { page: 1, pageSize: 10 }],
