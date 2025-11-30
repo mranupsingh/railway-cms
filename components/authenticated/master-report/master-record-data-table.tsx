@@ -57,7 +57,7 @@ function formatDate(date: Date | string | null): string {
 }
 
 // Define all columns
-const createColumns = (): ColumnDef<CoachMaster>[] => [
+export const createColumns = (): ColumnDef<CoachMaster>[] => [
     {
         id: "select",
         header: ({ table }) => (
