@@ -54,7 +54,7 @@ const data = {
       items: [
         {
           title: "Add coaches in yard",
-          url: "#",
+          url: ROUTE.ADD_COACH_IN_YARD,
         },
         {
           title: "Air brake",

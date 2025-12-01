@@ -3,7 +3,7 @@ import { ChartAreaInteractive } from "@/components/authenticated/components/char
 import { DashboardStats } from "@/components/authenticated/dashboard/dashboard-stats"
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query"
 import { Metadata } from "next"
-import { DashboardDataTable } from "./dashboard-data-table"
+import { DashboardDataTable } from "../../../components/authenticated/dashboard/dashboard-data-table"
 
 export const metadata: Metadata = {
     title: "Dashboard | Railway CMS",
