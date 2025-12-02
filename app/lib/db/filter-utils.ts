@@ -92,7 +92,10 @@ function buildSingleCondition(condition: FilterCondition) {
     // Handle empty/not empty which don't need values
     if (operator === 'isEmpty') {
         return {
-            [column]: { equals: null } // or equals: '' depending on DB
+            OR: [
+                { [column]: { equals: null } },
+                { [column]: { equals: '' } }
+            ]
         };
     }
 
