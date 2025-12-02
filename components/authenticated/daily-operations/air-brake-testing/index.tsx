@@ -26,7 +26,7 @@ import { cn } from '@/lib/utils';
 export default function AirBrakeTesting() {
     const [selectedCoaches, setSelectedCoaches] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [airBrakeDate, setAirBrakeDate] = useState<Date | undefined>(new Date());
+    const [airBrakeDate, setAirBrakeDate] = useState<Date>(new Date());
     const queryClient = useQueryClient();
 
     // Fetch coaches with infinite scroll
@@ -181,6 +181,7 @@ export default function AirBrakeTesting() {
                                                 date > new Date() || date < new Date("1900-01-01")
                                             }
                                             initialFocus
+                                            required
                                         />
                                     </PopoverContent>
                                 </Popover>
