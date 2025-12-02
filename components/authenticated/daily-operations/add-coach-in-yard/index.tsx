@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { getCoachMasterData } from '@/app/(authenticated)/master-record/actions';
+import { addCoachToYard } from '@/app/(authenticated)/(daily-operations)/add-coach-in-yard/actions';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +26,7 @@ import { SearchableSelect } from '@/components/ui/searchable-select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
 
 // Schema for the form
 const formSchema = z.object({
@@ -34,20 +36,30 @@ const formSchema = z.object({
     status: z.string().min(1, 'Status is required'),
     remark: z.string().optional(),
     remaster: z.string().optional(),
+    duesch: z.string().optional(),
+    lschedule: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const STATUS_OPTIONS = [
-    { value: 'POH', label: 'POH' },
-    { value: 'MISE', label: 'MISE' },
-    { value: 'SR', label: 'SR' },
-    { value: 'COMDAM', label: 'COMDAM' },
+    { value: 'POH', label: 'Periodic Overhaul - POH' },
+    { value: 'MISC', label: 'Miscellaneous - MISC' },
+    { value: 'SR', label: 'Special Repair - SR' },
+    { value: 'COND', label: 'Condemnation - COND' },
+    { value: 'TRANSIN', label: 'Transfer In - TRANSIN' },
 ];
 
 const POH_OPTIONS = [
-    { value: 'YD', label: 'YD' },
-    { value: 'PL', label: 'PL' },
+    { value: 'YD', label: 'Yard - YD' },
+    { value: 'PL', label: 'Lower Parel - PL' },
+];
+
+const SCHEDULE_OPTIONS = [
+    { value: 'SS1_18M', label: 'SS1 (18 Months)' },
+    { value: 'SS2', label: 'SS2' },
+    { value: 'SS1_54M', label: 'SS1 (54 Months)' },
+    { value: 'SS3', label: 'SS3' },
 ];
 
 export default function AddCoachInYard() {
@@ -65,6 +77,8 @@ export default function AddCoachInYard() {
             status: 'POH',
             remark: '',
             remaster: '',
+            duesch: '',
+            lschedule: '',
         },
     });
 
@@ -111,14 +125,9 @@ export default function AddCoachInYard() {
     // Mutation for saving data
     const mutation = useMutation({
         mutationFn: async (values: FormValues) => {
-            const response = await fetch('/api/v1/coach/yard', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values),
-            });
-            const result = await response.json();
-            if (!result.success) throw new Error(result.error);
-            return result;
+            const response = await addCoachToYard(values);
+            if (!response.success) throw new Error(response.error);
+            return response;
         },
         onSuccess: () => {
             toast.success('Coach added to yard successfully');
@@ -129,6 +138,8 @@ export default function AddCoachInYard() {
                 status: 'POH',
                 remark: '',
                 remaster: '',
+                duesch: '',
+                lschedule: '',
             });
             setSelectedCoach(null);
             queryClient.invalidateQueries({ queryKey: ['coaches-in-yard-candidates'] });
@@ -148,13 +159,40 @@ export default function AddCoachInYard() {
             const coach = selectedOption.original;
             setSelectedCoach(coach);
             form.setValue('coachno', coachno);
+            form.setValue('remark', coach.remark || '');
+            form.setValue('remaster', coach.remaster || '');
 
-            // Auto-fill remarks if present
-            if (coach.remark) {
-                form.setValue('remark', coach.remark);
-            }
-            if (coach.remaster) {
-                form.setValue('remaster', coach.remaster);
+            // LHB Schedule Logic
+            if (coach.lhbnlhb === 'Y') {
+                let nextDuesch = '';
+                let nextLschedule = '';
+
+                const currentDuesch = coach.duesch;
+
+                if (!currentDuesch) {
+                    nextDuesch = 'SS1_18M';
+                    nextLschedule = '';
+                } else if (currentDuesch === 'SS1_18M') {
+                    nextDuesch = 'SS2';
+                    nextLschedule = 'SS1_18M';
+                } else if (currentDuesch === 'SS2') {
+                    nextDuesch = 'SS1_54M';
+                    nextLschedule = 'SS2';
+                } else if (currentDuesch === 'SS1_54M') {
+                    nextDuesch = 'SS3';
+                    nextLschedule = 'SS1_54M';
+                } else if (currentDuesch === 'SS3') {
+                    nextDuesch = 'SS1_18M';
+                    nextLschedule = 'SS3';
+                } else {
+                    nextDuesch = 'SS1_18M';
+                }
+
+                form.setValue('duesch', nextDuesch);
+                form.setValue('lschedule', nextLschedule);
+            } else {
+                form.setValue('duesch', '');
+                form.setValue('lschedule', '');
             }
         }
     };
@@ -204,7 +242,7 @@ export default function AddCoachInYard() {
                                     value={selectedCoach.retpohdt ? format(new Date(selectedCoach.retpohdt), 'dd/MM/yyyy') : '-'}
                                 />
                                 <DetailRow label="LHB Last Schedule" value={selectedCoach.lschedule} />
-                                <DetailRow label="LHB Next Schedule" value={selectedCoach.duesch} />
+                                <DetailRow label="LHB Due Schedule" value={selectedCoach.duesch} />
                                 <DetailRow label="Age on Today" value={selectedCoach.age?.toString()} />
                                 <DetailRow label="Last POH By" value={selectedCoach.lpohby} />
                             </CardContent>
@@ -277,7 +315,7 @@ export default function AddCoachInYard() {
                                                             options={POH_OPTIONS}
                                                             placeholder="Select POH In"
                                                             searchPlaceholder="Search..."
-                                                            disabled={false} // User asked to use same select, but requirements said disabled. I'll keep it enabled if they want to search, or maybe they meant just the component style. The original requirement said "default YD and disabled for now". But the new requirement says "Update the POH In dorpdown wiht searchable and single select use same select". This implies interaction. I will enable it but default to YD.
+                                                            disabled={true}
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -304,6 +342,54 @@ export default function AddCoachInYard() {
                                                 </FormItem>
                                             )}
                                         />
+
+                                        {selectedCoach?.lhbnlhb === 'Y' && (
+                                            <>
+                                                <FormField
+                                                    control={form.control}
+                                                    name="duesch"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Due Schedule (LHB)</FormLabel>
+                                                            <FormControl>
+                                                                <SearchableSelect
+                                                                    value={field.value}
+                                                                    onValueChange={(val) => {
+                                                                        field.onChange(val);
+                                                                        // Manual override logic
+                                                                        let calculatedLschedule = '';
+                                                                        if (val === 'SS2') calculatedLschedule = 'SS1_18M';
+                                                                        else if (val === 'SS1_54M') calculatedLschedule = 'SS2';
+                                                                        else if (val === 'SS3') calculatedLschedule = 'SS1_54M';
+                                                                        else if (val === 'SS1_18M') calculatedLschedule = 'SS3';
+
+                                                                        form.setValue('lschedule', calculatedLschedule);
+                                                                    }}
+                                                                    options={SCHEDULE_OPTIONS}
+                                                                    placeholder="Select Schedule"
+                                                                    searchPlaceholder="Search Schedule..."
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+
+                                                <FormField
+                                                    control={form.control}
+                                                    name="lschedule"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Last Schedule (LHB)</FormLabel>
+                                                            <FormControl>
+                                                                <Input {...field} readOnly className="bg-muted" />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </>
+                                        )}
                                     </div>
 
                                     <FormField

@@ -30,7 +30,7 @@ export async function getHistoryData(params: HistoryQueryParams = {}): Promise<A
 export async function updateHistory(id: string, data: Partial<any>): Promise<ApiActionResponse<any>> {
     const result = await handleServerAction(async () => {
         const response = await httpServer.patch<any>(
-            ENDPOINTS.COACH.HISTORY.GET + `/${id}`,
+            ENDPOINTS.COACH.HISTORY.UPDATE(id),
             data
         );
 

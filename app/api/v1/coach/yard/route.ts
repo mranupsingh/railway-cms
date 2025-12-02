@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { coachno, yardindt, pohby, status, remark, remaster } = body;
+        const { coachno, yardindt, pohby, status, remark, remaster, duesch, lschedule } = body;
 
         if (!coachno) {
             return NextResponse.json(
@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
                 status,
                 remark, // Shop remark
                 remaster, // Master remark
+                duesch,
+                lschedule,
                 // We might want to update other fields if needed, but requirements specified these.
             }
         });

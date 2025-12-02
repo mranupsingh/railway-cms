@@ -102,6 +102,33 @@ const SidebarProvider = React.forwardRef<
         : setOpen((open) => !open)
     }, [isMobile, setOpen, setOpenMobile])
 
+    // Swipe gestures
+    const touchStartRef = React.useRef<number | null>(null)
+    const touchEndRef = React.useRef<number | null>(null)
+
+    const onTouchStart = (e: React.TouchEvent) => {
+      touchEndRef.current = null
+      touchStartRef.current = e.targetTouches[0].clientX
+    }
+
+    const onTouchMove = (e: React.TouchEvent) => {
+      touchEndRef.current = e.targetTouches[0].clientX
+    }
+
+    const onTouchEnd = () => {
+      if (!touchStartRef.current || !touchEndRef.current) return
+      const distance = touchStartRef.current - touchEndRef.current
+      const isLeftSwipe = distance > 50
+      const isRightSwipe = distance < -50
+
+      if (isLeftSwipe && openMobile) {
+        setOpenMobile(false)
+      }
+      if (isRightSwipe && !openMobile) {
+        setOpenMobile(true)
+      }
+    }
+
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
@@ -152,6 +179,9 @@ const SidebarProvider = React.forwardRef<
             )}
             ref={ref}
             {...props}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
           >
             {children}
           </div>
@@ -549,6 +579,7 @@ const SidebarMenuButton = React.forwardRef<
     asChild?: boolean
     isActive?: boolean
     tooltip?: string | React.ComponentProps<typeof TooltipContent>
+    autoCloseMobile?: boolean
   } & VariantProps<typeof sidebarMenuButtonVariants>
 >(
   (
@@ -558,13 +589,14 @@ const SidebarMenuButton = React.forwardRef<
       variant = "default",
       size = "default",
       tooltip,
+      autoCloseMobile = true,
       className,
       ...props
     },
     ref
   ) => {
     const Comp = asChild ? Slot : "button"
-    const { isMobile, state } = useSidebar()
+    const { isMobile, state, setOpenMobile } = useSidebar()
 
     const button = (
       <Comp
@@ -573,6 +605,12 @@ const SidebarMenuButton = React.forwardRef<
         data-size={size}
         data-active={isActive}
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+        onClick={(e) => {
+          if (isMobile && autoCloseMobile) {
+            setOpenMobile(false)
+          }
+          props.onClick?.(e)
+        }}
         {...props}
       />
     )
@@ -624,7 +662,7 @@ const SidebarMenuAction = React.forwardRef<
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
+        "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-sidebar-accent-foreground md:opacity-0",
         className
       )}
       {...props}
@@ -724,6 +762,7 @@ const SidebarMenuSubButton = React.forwardRef<
   }
 >(({ asChild = false, size = "md", isActive, className, ...props }, ref) => {
   const Comp = asChild ? Slot : "a"
+  const { isMobile, setOpenMobile } = useSidebar()
 
   return (
     <Comp
@@ -739,6 +778,12 @@ const SidebarMenuSubButton = React.forwardRef<
         "group-data-[collapsible=icon]:hidden",
         className
       )}
+      onClick={(e) => {
+        if (isMobile) {
+          setOpenMobile(false)
+        }
+        props.onClick?.(e)
+      }}
       {...props}
     />
   )

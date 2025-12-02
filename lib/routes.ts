@@ -23,6 +23,9 @@ export const ROUTE = {
     MASTER_RECORD: '/master-record',
     HISTORY_RECORD: '/history-record',
     ADD_COACH_IN_YARD: '/add-coach-in-yard',
+    ADD_COACH_IN_SHOP: '/add-coach-in-shop',
+    AIR_BRAKE: '/air-brake',
+
 } as const
 export type Routes = typeof ROUTE[keyof typeof ROUTE]
 
@@ -33,6 +36,8 @@ export const RouteInfo = new Map<Routes, RouteInfoValueProps>([
     [ROUTE.MASTER_RECORD, { segment: ROUTE.MASTER_RECORD, type: ROUTE_ACCESS.PROTECTED, title: 'Master Record' }],
     [ROUTE.HISTORY_RECORD, { segment: ROUTE.HISTORY_RECORD, type: ROUTE_ACCESS.PROTECTED, title: 'History Record' }],
     [ROUTE.ADD_COACH_IN_YARD, { segment: ROUTE.ADD_COACH_IN_YARD, type: ROUTE_ACCESS.PROTECTED, title: 'Add Coach In Yard' }],
+    [ROUTE.ADD_COACH_IN_SHOP, { segment: ROUTE.ADD_COACH_IN_SHOP, type: ROUTE_ACCESS.PROTECTED, title: 'Add Coach In Shop' }],
+    [ROUTE.AIR_BRAKE, { segment: ROUTE.AIR_BRAKE, type: ROUTE_ACCESS.PROTECTED, title: 'Air Brake' }],
 ]);
 
 // Precompute once at startup

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { cookies } from "next/headers";
 import QueryProvider from "@/app/lib/https/query-provider";
 import { ThemeProvider } from "@/components/authenticated/components/theme-provider";
+import NextTopLoader from 'nextjs-toploader';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,6 +36,10 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NextTopLoader
+          showSpinner={false}
+          color="#2299DD"
+        />
         <QueryProvider>
           <ThemeProvider
             attribute="class"

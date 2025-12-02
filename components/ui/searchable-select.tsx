@@ -38,6 +38,8 @@ interface SearchableSelectProps {
     hasMore?: boolean
     disabled?: boolean
     className?: string
+    keepOpenOnSelect?: boolean
+    selectedValues?: string[]
 }
 
 export function SearchableSelect({
@@ -53,6 +55,8 @@ export function SearchableSelect({
     hasMore = false,
     disabled = false,
     className,
+    keepOpenOnSelect = false,
+    selectedValues = [],
 }: SearchableSelectProps) {
     const [open, setOpen] = React.useState(false)
     const [searchValue, setSearchValue] = React.useState("")
@@ -164,7 +168,9 @@ export function SearchableSelect({
                                                 value={option.label}
                                                 onSelect={() => {
                                                     onValueChange(option.value)
-                                                    setOpen(false)
+                                                    if (!keepOpenOnSelect) {
+                                                        setOpen(false)
+                                                    }
                                                 }}
                                                 style={{
                                                     position: 'absolute',
@@ -178,7 +184,8 @@ export function SearchableSelect({
                                                 <Check
                                                     className={cn(
                                                         "mr-2 h-4 w-4",
-                                                        value === option.value ? "opacity-100" : "opacity-0"
+                                                        "mr-2 h-4 w-4",
+                                                        value === option.value || selectedValues.includes(option.value) ? "opacity-100" : "opacity-0"
                                                     )}
                                                 />
                                                 {option.label}
@@ -194,13 +201,16 @@ export function SearchableSelect({
                                             value={option.label}
                                             onSelect={() => {
                                                 onValueChange(option.value)
-                                                setOpen(false)
+                                                if (!keepOpenOnSelect) {
+                                                    setOpen(false)
+                                                }
                                             }}
                                         >
                                             <Check
                                                 className={cn(
                                                     "mr-2 h-4 w-4",
-                                                    value === option.value ? "opacity-100" : "opacity-0"
+                                                    "mr-2 h-4 w-4",
+                                                    value === option.value || selectedValues.includes(option.value) ? "opacity-100" : "opacity-0"
                                                 )}
                                             />
                                             {option.label}
