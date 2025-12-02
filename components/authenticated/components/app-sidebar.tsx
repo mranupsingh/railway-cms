@@ -58,7 +58,7 @@ const data = {
         },
         {
           title: "Air brake",
-          url: "#",
+          url: ROUTE.AIR_BRAKE,
         },
         {
           title: "R-Lifting",

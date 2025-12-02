@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { getCoachMasterData } from '@/app/(authenticated)/master-record/actions';
+import { addCoachToYard } from '@/app/(authenticated)/(daily-operations)/add-coach-in-yard/actions';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -124,14 +125,9 @@ export default function AddCoachInYard() {
     // Mutation for saving data
     const mutation = useMutation({
         mutationFn: async (values: FormValues) => {
-            const response = await fetch('/api/v1/coach/yard', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values),
-            });
-            const result = await response.json();
-            if (!result.success) throw new Error(result.error);
-            return result;
+            const response = await addCoachToYard(values);
+            if (!response.success) throw new Error(response.error);
+            return response;
         },
         onSuccess: () => {
             toast.success('Coach added to yard successfully');

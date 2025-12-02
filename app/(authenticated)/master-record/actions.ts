@@ -30,7 +30,7 @@ export async function getCoachMasterData(params: CoachMasterQueryParams = {}): P
 export async function updateCoachMaster(coachno: string, data: Partial<any>): Promise<ApiActionResponse<any>> {
     const result = await handleServerAction(async () => {
         const response = await httpServer.patch<any>(
-            ENDPOINTS.COACH.MASTER.GET + `/${coachno}`,
+            ENDPOINTS.COACH.MASTER.UPDATE(coachno),
             data
         );
 
