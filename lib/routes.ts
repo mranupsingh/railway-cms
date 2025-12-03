@@ -37,6 +37,8 @@ export const ROUTE = {
     ADD_COACH_IN_SHOP: '/add-coach-in-shop',
     LOGS: '/logs',
 
+    ADD_COACH_IN_SHOP: '/add-coach-in-shop',
+
 } as const
 export type Routes = typeof ROUTE[keyof typeof ROUTE]
 
