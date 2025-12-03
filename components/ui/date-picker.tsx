@@ -1,7 +1,7 @@
 "use client"
 import * as React from "react"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -22,12 +22,23 @@ export function DatePicker({ value, onChange, placeholder = "Pick a date" }: Dat
                 <Button
                     variant={"outline"}
                     className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal group",
                         !value && "text-muted-foreground"
                     )}
                 >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {value ? format(value, "PPP") : <span>{placeholder}</span>}
+                    {value && (
+                        <span
+                            className="ml-auto h-4 w-4 opacity-50 hover:opacity-100 cursor-pointer"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                onChange?.(undefined)
+                            }}
+                        >
+                            <X className="h-4 w-4" />
+                        </span>
+                    )}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">

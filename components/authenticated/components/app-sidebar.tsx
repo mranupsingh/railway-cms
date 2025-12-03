@@ -53,13 +53,18 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Add coaches in yard",
+          title: "Add coach in yard",
           url: ROUTE.ADD_COACH_IN_YARD,
+        },
+        {
+          title: "Remove coaches from yard",
+          url: ROUTE.REMOVE_COACHES_FROM_YARD,
         },
         {
           title: "Air brake",
           url: ROUTE.AIR_BRAKE,
         },
+
         {
           title: "R-Lifting",
           url: "#",

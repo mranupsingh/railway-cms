@@ -47,7 +47,7 @@ const STATUS_OPTIONS = [
     { value: 'MISC', label: 'Miscellaneous - MISC' },
     { value: 'SR', label: 'Special Repair - SR' },
     { value: 'COND', label: 'Condemnation - COND' },
-    { value: 'TRANSIN', label: 'Transfer In - TRANSIN' },
+    // { value: 'TRANSIN', label: 'Transfer In - TRANSIN' },
 ];
 
 const POH_OPTIONS = [
@@ -81,6 +81,10 @@ export default function AddCoachInYard() {
             lschedule: '',
         },
     });
+
+    const values = {
+        status: form.watch('status')
+    }
 
     // Fetch coaches with infinite scroll
     const {
@@ -163,7 +167,7 @@ export default function AddCoachInYard() {
             form.setValue('remaster', coach.remaster || '');
 
             // LHB Schedule Logic
-            if (coach.lhbnlhb === 'Y') {
+            if (coach.lhbnlhb === 'Y' && values.status === 'POH') {
                 let nextDuesch = '';
                 let nextLschedule = '';
 
@@ -228,11 +232,12 @@ export default function AddCoachInYard() {
                     {selectedCoach && (
                         <Card>
                             <CardHeader>
-                                <CardTitle>Coach Details</CardTitle>
+                                <CardTitle>Coach Previous Details</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <DetailRow label="Coach No" value={selectedCoach.coachno} />
                                 <DetailRow label="Coach Code" value={selectedCoach.code} />
+                                <DetailRow label="Status" value={selectedCoach.status} />
                                 <DetailRow
                                     label="Last POH Date"
                                     value={selectedCoach.lshopoutdt ? format(new Date(selectedCoach.lshopoutdt), 'dd/MM/yyyy') : '-'}
@@ -343,7 +348,7 @@ export default function AddCoachInYard() {
                                             )}
                                         />
 
-                                        {selectedCoach?.lhbnlhb === 'Y' && (
+                                        {(selectedCoach?.lhbnlhb === 'Y' && values?.status === 'POH') && (
                                             <>
                                                 <FormField
                                                     control={form.control}

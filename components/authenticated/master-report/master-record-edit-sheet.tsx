@@ -117,12 +117,17 @@ export function MasterRecordEditSheet({
 
         // Fix date timezone issues by converting to UTC date string
         Object.keys(cleanedValues).forEach(key => {
-            if (isDateField(key) && cleanedValues[key] instanceof Date) {
-                const date = cleanedValues[key];
-                // Create a UTC date that matches the local date
-                // This ensures 31st Dec local becomes 31st Dec UTC
-                const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-                cleanedValues[key] = utcDate;
+            if (isDateField(key)) {
+                if (cleanedValues[key] instanceof Date) {
+                    const date = cleanedValues[key];
+                    // Create a UTC date that matches the local date
+                    // This ensures 31st Dec local becomes 31st Dec UTC
+                    const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+                    cleanedValues[key] = utcDate;
+                } else if (cleanedValues[key] === undefined || cleanedValues[key] === null) {
+                    // Explicitly set to null if undefined/cleared so backend updates it
+                    cleanedValues[key] = null;
+                }
             }
         });
 
@@ -144,7 +149,7 @@ export function MasterRecordEditSheet({
     // Separate fields
     const allKeys = Object.keys(coach).filter(key => key !== 'coachno'); // Exclude PK from edit if it's not editable
 
-    const masterFields = MASTER_FIELDS.filter(field => field !== 'coachno');
+    const masterFields = MASTER_FIELDS;
     const otherFields = allKeys.filter(key => !MASTER_FIELDS.includes(key));
 
     return (
@@ -181,7 +186,9 @@ export function MasterRecordEditSheet({
                                                         {isDateField(field) ? (
                                                             <DatePicker
                                                                 value={formField.value}
-                                                                onChange={formField.onChange}
+                                                                onChange={(value) => {
+                                                                    formField.onChange(value || '');
+                                                                }}
                                                             />
                                                         ) : (
                                                             <Input
@@ -228,7 +235,9 @@ export function MasterRecordEditSheet({
                                                         {isDateField(field) ? (
                                                             <DatePicker
                                                                 value={formField.value}
-                                                                onChange={formField.onChange}
+                                                                onChange={(value) => {
+                                                                    formField.onChange(value || '');
+                                                                }}
                                                             />
                                                         ) : (
                                                             <Input
