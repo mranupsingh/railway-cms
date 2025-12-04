@@ -67,7 +67,23 @@ const data = {
 
         {
           title: "R-Lifting",
-          url: "#",
+          url: ROUTE.R_LIFTING,
+        },
+        {
+          title: "Upholstery",
+          url: ROUTE.UPHOLSTERY,
+        },
+        {
+          title: "Bio-tank",
+          url: ROUTE.BIO_TANK,
+        },
+        {
+          title: "Electric and NTXR Fit",
+          url: ROUTE.ELECTRIC_NTXR,
+        },
+        {
+          title: "Lifting Report",
+          url: ROUTE.LIFTING_REPORT,
         },
       ],
     },
@@ -161,6 +177,11 @@ const data = {
       title: "Search",
       url: "#",
       icon: SearchIcon,
+    },
+    {
+      title: "Logs",
+      url: ROUTE.LOGS,
+      icon: FileCodeIcon,
     },
   ],
   documents: [

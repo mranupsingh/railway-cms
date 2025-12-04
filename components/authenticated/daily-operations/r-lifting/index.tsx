@@ -2,15 +2,16 @@
 
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { Loader2, Trash2 } from 'lucide-react';
+import { CalendarIcon, Loader2, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { getCoachMasterData } from '@/app/(authenticated)/master-record/actions';
-import { removeCoachesFromYard } from '@/app/(authenticated)/(daily-operations)/remove-coaches-from-yard/actions';
+import { updateRLiftingDate } from '@/app/(authenticated)/(daily-operations)/r-lifting/actions';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { SearchableSelect } from '@/components/ui/searchable-select';
 import {
     Table,
@@ -20,13 +21,15 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 
-export default function RemoveCoachFromYard() {
+export default function RLifting() {
     const [selectedCoaches, setSelectedCoaches] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [rLiftingDate, setRLiftingDate] = useState<Date>(new Date());
     const queryClient = useQueryClient();
 
-    // Fetch coaches in yard (pohby = 'YD')
+    // Fetch coaches with infinite scroll
     const {
         data,
         fetchNextPage,
@@ -34,9 +37,11 @@ export default function RemoveCoachFromYard() {
         isFetchingNextPage,
         isLoading: isLoadingCoaches
     } = useInfiniteQuery({
-        queryKey: ['coaches-in-yard-to-remove', searchTerm],
+        queryKey: ['coaches-for-r-lifting', searchTerm],
         queryFn: async ({ pageParam = 1 }) => {
-            const filters: any[] = [{ column: 'pohby', operator: 'equals', value: 'YD' }];
+            const filters: any[] = [
+                { column: 'pohby', operator: 'equals', value: 'PL' }
+            ];
 
             const response = await getCoachMasterData({
                 filters: JSON.stringify(filters),
@@ -56,6 +61,7 @@ export default function RemoveCoachFromYard() {
         },
     });
 
+    // Flatten data for the dropdown
     const coachOptions = useMemo(() => {
         const coaches = data?.pages.flatMap(page => page?.items || []) || [];
         return coaches.map(c => ({
@@ -73,39 +79,33 @@ export default function RemoveCoachFromYard() {
             if (selectedCoaches.find(c => c.coachno === coach.coachno)) {
                 setSelectedCoaches(selectedCoaches.filter(c => c.coachno !== coachno));
             } else {
-                setSelectedCoaches([...selectedCoaches, { ...coach, remark: coach.remark || '' }]);
+                setSelectedCoaches([...selectedCoaches, coach]);
             }
         }
-    };
-
-    const handleRemarkChange = (coachno: string, value: string) => {
-        setSelectedCoaches(selectedCoaches.map(c =>
-            c.coachno === coachno ? { ...c, remark: value } : c
-        ));
     };
 
     const handleRemoveCoach = (coachno: string) => {
         setSelectedCoaches(selectedCoaches.filter(c => c.coachno !== coachno));
     };
 
+    // Mutation for saving data
     const mutation = useMutation({
         mutationFn: async () => {
-            const response = await removeCoachesFromYard({
-                coaches: selectedCoaches.map(c => ({
-                    coachno: c.coachno,
-                    remark: c.remark
-                }))
+            const response = await updateRLiftingDate({
+                coachNos: selectedCoaches.map(c => c.coachno),
+                rLiftingDate: rLiftingDate
             });
             if (!response.success) throw new Error(response.error);
             return response;
         },
-        onSuccess: (data) => {
-            toast.success(data.data?.message || 'Coaches removed from yard successfully');
+        onSuccess: (data: any) => {
+            toast.success(data.message || 'R-Lifting date updated successfully');
             setSelectedCoaches([]);
-            queryClient.invalidateQueries({ queryKey: ['coaches-in-yard-to-remove'] });
+            setRLiftingDate(new Date());
+            queryClient.invalidateQueries({ queryKey: ['coaches-for-r-lifting'] });
         },
         onError: (error) => {
-            toast.error(`Failed to remove coaches: ${error.message}`);
+            toast.error(`Failed to save: ${error.message}`);
         },
     });
 
@@ -114,13 +114,17 @@ export default function RemoveCoachFromYard() {
             toast.error('Please select at least one coach');
             return;
         }
+        if (!rLiftingDate) {
+            toast.error('Please select a R-Lifting date');
+            return;
+        }
         mutation.mutate();
     };
 
     return (
         <div className="container mx-auto py-6 space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Remove Coaches from Yard</h1>
+                <h1 className="text-3xl font-bold tracking-tight">R-Lifting Update</h1>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -148,14 +152,47 @@ export default function RemoveCoachFromYard() {
                                 />
                             </div>
 
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">R-Lifting Date</label>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-full pl-3 text-left font-normal",
+                                                !rLiftingDate && "text-muted-foreground"
+                                            )}
+                                        >
+                                            {rLiftingDate ? (
+                                                format(rLiftingDate, "PPP")
+                                            ) : (
+                                                <span>Pick a date</span>
+                                            )}
+                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={rLiftingDate}
+                                            onSelect={(date) => date && setRLiftingDate(date)}
+                                            disabled={(date) =>
+                                                date > new Date() || date < new Date("1900-01-01")
+                                            }
+                                            initialFocus
+                                            required
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+
                             <Button
                                 className="w-full"
-                                variant="destructive"
                                 onClick={handleSave}
-                                disabled={selectedCoaches.length === 0 || mutation.isPending}
+                                disabled={selectedCoaches.length === 0 || !rLiftingDate || mutation.isPending}
                             >
                                 {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Remove Coaches from Yard
+                                Save Updates
                             </Button>
                         </CardContent>
                     </Card>
@@ -174,18 +211,15 @@ export default function RemoveCoachFromYard() {
                                         <TableRow>
                                             <TableHead>Coach No</TableHead>
                                             <TableHead>Code</TableHead>
-                                            <TableHead>Return POH Date</TableHead>
-                                            <TableHead>POH Date</TableHead>
-                                            <TableHead>POH By</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead>Remark</TableHead>
+                                            <TableHead>Old R-Lifting Date</TableHead>
+                                            <TableHead>New R-Lifting Date</TableHead>
                                             <TableHead className="w-[50px]"></TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {selectedCoaches.length === 0 ? (
                                             <TableRow>
-                                                <TableCell colSpan={7} className="h-24 text-center">
+                                                <TableCell colSpan={5} className="h-24 text-center">
                                                     No coaches selected.
                                                 </TableCell>
                                             </TableRow>
@@ -194,19 +228,11 @@ export default function RemoveCoachFromYard() {
                                                 <TableRow key={coach.coachno}>
                                                     <TableCell className="font-medium">{coach.coachno}</TableCell>
                                                     <TableCell>{coach.code}</TableCell>
-                                                    <TableCell>{coach.retpohdt ? format(new Date(coach.retpohdt), 'dd/MM/yyyy') : '-'}</TableCell>
                                                     <TableCell>
-                                                        {coach.lshopoutdt ? format(new Date(coach.lshopoutdt), 'dd/MM/yyyy') : '-'}
+                                                        {coach.reliftdt ? format(new Date(coach.reliftdt), 'dd/MM/yyyy') : '-'}
                                                     </TableCell>
-                                                    <TableCell>{coach.pohby}</TableCell>
-                                                    <TableCell>{coach.status}</TableCell>
-                                                    <TableCell>
-                                                        <Input
-                                                            value={coach.remark || ''}
-                                                            onChange={(e) => handleRemarkChange(coach.coachno, e.target.value)}
-                                                            placeholder="Enter remark"
-                                                            className="h-8"
-                                                        />
+                                                    <TableCell className="text-green-600 font-medium">
+                                                        {rLiftingDate ? format(rLiftingDate, 'dd/MM/yyyy') : '-'}
                                                     </TableCell>
                                                     <TableCell>
                                                         <Button

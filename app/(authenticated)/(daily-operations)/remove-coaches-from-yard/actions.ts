@@ -6,26 +6,19 @@ import { unwrapApiResponse } from "@/app/lib/https/utils";
 
 import { RemoveCoachesFromYardRequest, RemoveCoachesFromYardResponse } from "./types";
 
+import prisma from "@/lib/db/prisma";
+
 export async function removeCoachesFromYard(data: RemoveCoachesFromYardRequest): Promise<ApiActionResponse<RemoveCoachesFromYardResponse>> {
-    const result = await handleServerAction(async () => {
-        // We need to update each coach individually as there might not be a bulk update endpoint
-        // Or if there is a bulk endpoint, we should use it. 
-        // Assuming we need to update each coach's pohby to null/empty.
-        // However, the requirement says "clear that field form YD to blank. empty"
-        // Let's assume we iterate and update. 
-        // Wait, better to check if there is a bulk endpoint or just loop.
-        // Since I don't see a bulk endpoint in the previous exploration, I will loop.
-        // BUT, for efficiency, if the backend supports it, it's better.
-        // Let's try to find if there is a bulk update or just use a loop for now.
-        // Actually, the user said "actions also for api calls", implying I should create the action.
+    let oldCoaches: any[] = [];
 
-        // I will implement it by iterating over the coach numbers and updating them.
-        // This might be slow if many coaches are selected, but safe.
-
-        const promises = data.coachNos.map(coachno =>
+    return await handleServerAction(async () => {
+        const promises = data.coaches.map(coach =>
             httpServer.patch<any>(
-                ENDPOINTS.COACH.MASTER.UPDATE(coachno),
-                { pohby: null } // or "" depending on backend, usually null for clearing
+                ENDPOINTS.COACH.MASTER.UPDATE(coach.coachno),
+                {
+                    pohby: null,
+                    remark: coach.remark || null
+                }
             )
         );
 
@@ -33,16 +26,40 @@ export async function removeCoachesFromYard(data: RemoveCoachesFromYardRequest):
 
         return {
             success: true,
-            message: `Successfully removed ${data.coachNos.length} coaches from yard`,
-            count: data.coachNos.length
+            message: `Successfully removed ${data.coaches.length} coaches from yard`,
+            count: data.coaches.length
         };
 
-    }, 'removeCoachesFromYardAction')
-
-    if (!result.success) {
-        console.log(result.error)
-        throw new Error(result.error || 'Something went wrong')
-    }
-
-    return result
+    }, 'removeCoachesFromYardAction', {
+        action: 'UPDATE',
+        entity: 'COACH_MASTER',
+        entityId: data.coaches.map(c => c.coachno).join(','),
+        getOldData: async () => {
+            try {
+                const coachNos = data.coaches.map(c => c.coachno);
+                const coaches = await (prisma as any).coach_master.findMany({
+                    where: {
+                        coachno: { in: coachNos }
+                    }
+                });
+                oldCoaches = coaches;
+                return coaches;
+            } catch (error) {
+                console.error('Failed to fetch old data:', error);
+                return null;
+            }
+        },
+        getNewData: () => {
+            if (!oldCoaches || oldCoaches.length === 0) return null;
+            return oldCoaches.map(coach => {
+                const newCoachData = data.coaches.find(c => c.coachno === coach.coachno);
+                return {
+                    ...coach,
+                    pohby: null,
+                    remark: newCoachData?.remark || null
+                };
+            });
+        },
+        details: `Removed coaches from yard: ${data.coaches.map(c => c.coachno).join(', ')}`
+    })
 }

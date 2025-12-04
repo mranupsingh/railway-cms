@@ -1,5 +1,8 @@
 export interface RemoveCoachesFromYardRequest {
-    coachNos: string[];
+    coaches: {
+        coachno: string;
+        remark?: string;
+    }[];
 }
 
 export interface RemoveCoachesFromYardResponse {
