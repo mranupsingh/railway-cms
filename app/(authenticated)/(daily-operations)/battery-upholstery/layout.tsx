@@ -5,7 +5,7 @@ import {
     SidebarInset
 } from "@/components/ui/sidebar"
 
-export default async function CorrosionStatusLayout({
+export default async function BatteryUpholsteryLayout({
     children,
 }: {
     children: React.ReactNode
@@ -15,7 +15,7 @@ export default async function CorrosionStatusLayout({
 
     return (
         <SidebarInset>
-            <SiteHeader title="Corrosion Status" theme={theme} />
+            <SiteHeader title="Battery & Upholstery Update" theme={theme} />
             <div className="flex flex-1 flex-col">{children}</div>
         </SidebarInset>
     )

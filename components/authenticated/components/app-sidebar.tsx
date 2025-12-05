@@ -74,6 +74,10 @@ const data = {
           url: ROUTE.UPHOLSTERY,
         },
         {
+          title: "Battery & Upholstery",
+          url: ROUTE.BATTERY_UPHOLSTERY,
+        },
+        {
           title: "Bio-tank",
           url: ROUTE.BIO_TANK,
         },
@@ -82,7 +86,7 @@ const data = {
           url: ROUTE.ELECTRIC_NTXR,
         },
         {
-          title: "Lifting Report",
+          title: "Corrosion Status",
           url: ROUTE.LIFTING_REPORT,
         },
       ],

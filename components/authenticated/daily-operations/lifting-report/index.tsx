@@ -128,7 +128,7 @@ export default function LiftingReport() {
             return response;
         },
         onSuccess: (data: any) => {
-            toast.success(data.message || 'Lifting Report updated successfully');
+            toast.success(data.message || 'Corrosion Status updated successfully');
             setSelectedCoach(null);
             setInspDate(undefined);
             setCorrStatus('P'); // Reset to default
@@ -164,7 +164,7 @@ export default function LiftingReport() {
     return (
         <div className="container mx-auto py-6 space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Lifting Report</h1>
+                <h1 className="text-3xl font-bold tracking-tight">Corrosion Status</h1>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -172,7 +172,7 @@ export default function LiftingReport() {
                 <div className="space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Update Lifting Details</CardTitle>
+                            <CardTitle>Corrosion Status Details</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">

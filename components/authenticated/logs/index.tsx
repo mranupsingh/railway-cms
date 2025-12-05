@@ -107,7 +107,7 @@ export default function LogsPage() {
                                     <TableHead>User</TableHead>
                                     <TableHead>Action</TableHead>
                                     <TableHead>Entity</TableHead>
-                                    <TableHead>Entity ID</TableHead>
+                                    <TableHead>Coach No.</TableHead>
                                     <TableHead>Details</TableHead>
                                     <TableHead>Changes</TableHead>
                                 </TableRow>
