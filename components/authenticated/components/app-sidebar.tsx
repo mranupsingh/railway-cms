@@ -53,16 +53,41 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Add coaches in yard",
+          title: "Add coach in yard",
           url: ROUTE.ADD_COACH_IN_YARD,
+        },
+        {
+          title: "Remove coaches from yard",
+          url: ROUTE.REMOVE_COACHES_FROM_YARD,
         },
         {
           title: "Air brake",
           url: ROUTE.AIR_BRAKE,
         },
+
         {
           title: "R-Lifting",
-          url: "#",
+          url: ROUTE.R_LIFTING,
+        },
+        {
+          title: "Upholstery",
+          url: ROUTE.UPHOLSTERY,
+        },
+        {
+          title: "Battery & Upholstery",
+          url: ROUTE.BATTERY_UPHOLSTERY,
+        },
+        {
+          title: "Bio-tank",
+          url: ROUTE.BIO_TANK,
+        },
+        {
+          title: "Electric and NTXR Fit",
+          url: ROUTE.ELECTRIC_NTXR,
+        },
+        {
+          title: "Corrosion Status",
+          url: ROUTE.LIFTING_REPORT,
         },
       ],
     },
@@ -156,6 +181,11 @@ const data = {
       title: "Search",
       url: "#",
       icon: SearchIcon,
+    },
+    {
+      title: "Logs",
+      url: ROUTE.LOGS,
+      icon: FileCodeIcon,
     },
   ],
   documents: [

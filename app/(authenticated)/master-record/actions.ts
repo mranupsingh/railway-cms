@@ -27,20 +27,37 @@ export async function getCoachMasterData(params: CoachMasterQueryParams = {}): P
     return result
 }
 
+import prisma from "@/lib/db/prisma";
+
 export async function updateCoachMaster(coachno: string, data: Partial<any>): Promise<ApiActionResponse<any>> {
-    const result = await handleServerAction(async () => {
+    let oldCoach: any = null;
+
+    return await handleServerAction(async () => {
         const response = await httpServer.patch<any>(
             ENDPOINTS.COACH.MASTER.UPDATE(coachno),
             data
         );
 
         return unwrapApiResponse<any>(response)
-    }, 'updateMasterDataAction')
-
-    if (!result.success) {
-        console.log(result.error)
-        throw new Error(result.error || 'Something went wrong')
-    }
-
-    return result
+    }, 'updateMasterDataAction', {
+        action: 'UPDATE',
+        entity: 'COACH_MASTER',
+        entityId: coachno,
+        getOldData: async () => {
+            try {
+                oldCoach = await (prisma as any).coach_master.findUnique({
+                    where: { coachno }
+                });
+                return oldCoach;
+            } catch (error) {
+                console.error('Failed to fetch old data:', error);
+                return null;
+            }
+        },
+        getNewData: () => {
+            if (!oldCoach) return null;
+            return { ...oldCoach, ...data };
+        },
+        details: `Updated Master Record for coach: ${coachno}`
+    })
 }

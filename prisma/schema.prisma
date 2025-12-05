@@ -251,3 +251,19 @@ model users {
   @@index([email], map: "idx_users_email")
   @@index([login_id], map: "idx_users_login_id")
 }
+
+model user_activity_logs {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.VarChar(255)
+  action     String   @db.VarChar(50)
+  entity     String   @db.VarChar(100)
+  entity_id  String   @db.VarChar(255)
+  old_data   Json?
+  new_data   Json?
+  details    String?
+  created_at DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([user_id], map: "idx_activity_user_id")
+  @@index([entity], map: "idx_activity_entity")
+  @@index([created_at], map: "idx_activity_created_at")
+}

@@ -22,9 +22,20 @@ export const ROUTE = {
     DASHBOARD: '/dashboard',
     MASTER_RECORD: '/master-record',
     HISTORY_RECORD: '/history-record',
+
     ADD_COACH_IN_YARD: '/add-coach-in-yard',
-    ADD_COACH_IN_SHOP: '/add-coach-in-shop',
+    REMOVE_COACHES_FROM_YARD: '/remove-coaches-from-yard',
+
     AIR_BRAKE: '/air-brake',
+    R_LIFTING: '/r-lifting',
+    UPHOLSTERY: '/upholstery',
+    BATTERY_UPHOLSTERY: '/battery-upholstery',
+    BIO_TANK: '/bio-tank',
+    ELECTRIC_NTXR: '/electric-ntxr',
+    LIFTING_REPORT: '/lifting-report',
+
+    ADD_COACH_IN_SHOP: '/add-coach-in-shop',
+    LOGS: '/logs',
 
 } as const
 export type Routes = typeof ROUTE[keyof typeof ROUTE]
@@ -36,8 +47,16 @@ export const RouteInfo = new Map<Routes, RouteInfoValueProps>([
     [ROUTE.MASTER_RECORD, { segment: ROUTE.MASTER_RECORD, type: ROUTE_ACCESS.PROTECTED, title: 'Master Record' }],
     [ROUTE.HISTORY_RECORD, { segment: ROUTE.HISTORY_RECORD, type: ROUTE_ACCESS.PROTECTED, title: 'History Record' }],
     [ROUTE.ADD_COACH_IN_YARD, { segment: ROUTE.ADD_COACH_IN_YARD, type: ROUTE_ACCESS.PROTECTED, title: 'Add Coach In Yard' }],
+    [ROUTE.REMOVE_COACHES_FROM_YARD, { segment: ROUTE.REMOVE_COACHES_FROM_YARD, type: ROUTE_ACCESS.PROTECTED, title: 'Remove Coaches From Yard' }],
     [ROUTE.ADD_COACH_IN_SHOP, { segment: ROUTE.ADD_COACH_IN_SHOP, type: ROUTE_ACCESS.PROTECTED, title: 'Add Coach In Shop' }],
     [ROUTE.AIR_BRAKE, { segment: ROUTE.AIR_BRAKE, type: ROUTE_ACCESS.PROTECTED, title: 'Air Brake' }],
+    [ROUTE.R_LIFTING, { segment: ROUTE.R_LIFTING, type: ROUTE_ACCESS.PROTECTED, title: 'R-Lifting' }],
+    [ROUTE.UPHOLSTERY, { segment: ROUTE.UPHOLSTERY, type: ROUTE_ACCESS.PROTECTED, title: 'Upholstery' }],
+    [ROUTE.BATTERY_UPHOLSTERY, { segment: ROUTE.BATTERY_UPHOLSTERY, type: ROUTE_ACCESS.PROTECTED, title: 'Battery & Upholstery' }],
+    [ROUTE.BIO_TANK, { segment: ROUTE.BIO_TANK, type: ROUTE_ACCESS.PROTECTED, title: 'Bio-tank Update' }],
+    [ROUTE.ELECTRIC_NTXR, { segment: ROUTE.ELECTRIC_NTXR, type: ROUTE_ACCESS.PROTECTED, title: 'Electric and NTXR Fit' }],
+    [ROUTE.LIFTING_REPORT, { segment: ROUTE.LIFTING_REPORT, type: ROUTE_ACCESS.PROTECTED, title: 'Lifting Report' }],
+    [ROUTE.LOGS, { segment: ROUTE.LOGS, type: ROUTE_ACCESS.PROTECTED, title: 'Audit Logs' }],
 ]);
 
 // Precompute once at startup

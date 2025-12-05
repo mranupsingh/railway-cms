@@ -124,9 +124,10 @@ const SidebarProvider = React.forwardRef<
       if (isLeftSwipe && openMobile) {
         setOpenMobile(false)
       }
-      if (isRightSwipe && !openMobile) {
-        setOpenMobile(true)
-      }
+      // Removed open gesture (left to right swipe)
+      // if (isRightSwipe && !openMobile) {
+      //   setOpenMobile(true)
+      // }
     }
 
     // Adds a keyboard shortcut to toggle the sidebar.

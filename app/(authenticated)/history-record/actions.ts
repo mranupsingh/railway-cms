@@ -27,20 +27,37 @@ export async function getHistoryData(params: HistoryQueryParams = {}): Promise<A
     return result
 }
 
+import prisma from "@/lib/db/prisma";
+
 export async function updateHistory(id: string, data: Partial<any>): Promise<ApiActionResponse<any>> {
-    const result = await handleServerAction(async () => {
+    let oldHistory: any = null;
+
+    return await handleServerAction(async () => {
         const response = await httpServer.patch<any>(
             ENDPOINTS.COACH.HISTORY.UPDATE(id),
             data
         );
 
         return unwrapApiResponse<any>(response)
-    }, 'updateHistoryAction')
-
-    if (!result.success) {
-        console.log(result.error)
-        throw new Error(result.error || 'Something went wrong')
-    }
-
-    return result
+    }, 'updateHistoryAction', {
+        action: 'UPDATE',
+        entity: 'HISTORY',
+        entityId: id,
+        getOldData: async () => {
+            try {
+                oldHistory = await (prisma as any).history.findUnique({
+                    where: { id }
+                });
+                return oldHistory;
+            } catch (error) {
+                console.error('Failed to fetch old data:', error);
+                return null;
+            }
+        },
+        getNewData: () => {
+            if (!oldHistory) return null;
+            return { ...oldHistory, ...data };
+        },
+        details: `Updated History Record: ${id}`
+    })
 }

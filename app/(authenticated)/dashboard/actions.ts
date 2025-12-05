@@ -134,3 +134,60 @@ export async function getCoaches({
         },
     }
 }
+
+export async function getShopStatistics() {
+    const coaches = await prisma.coach_master.findMany({
+        where: {
+            pohby: "PL",
+        },
+        select: {
+            code: true,
+            lhbnlhb: true,
+            acnac: true,
+        },
+    })
+
+    const total = coaches.length
+    const codeWiseCount: Record<string, number> = {}
+    let lhbCount = 0
+    let icfCount = 0
+    let lhbAcCount = 0
+    let lhbNacCount = 0
+    let icfAcCount = 0
+    let icfNacCount = 0
+
+    coaches.forEach((coach) => {
+        // Code wise count
+        const code = coach.code || "Unknown"
+        codeWiseCount[code] = (codeWiseCount[code] || 0) + 1
+
+        // LHB vs ICF
+        const isLhb = coach.lhbnlhb === "Y"
+        if (isLhb) {
+            lhbCount++
+            if (coach.acnac === "AC") {
+                lhbAcCount++
+            } else {
+                lhbNacCount++
+            }
+        } else {
+            icfCount++
+            if (coach.acnac === "AC") {
+                icfAcCount++
+            } else {
+                icfNacCount++
+            }
+        }
+    })
+
+    return {
+        total,
+        codeWiseCount,
+        lhbCount,
+        icfCount,
+        lhbAcCount,
+        lhbNacCount,
+        icfAcCount,
+        icfNacCount,
+    }
+}
