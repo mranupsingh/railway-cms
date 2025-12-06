@@ -45,7 +45,8 @@ export async function loginAction(formData: FormData) {
     if (result.success) {
         redirect(ROUTE.DASHBOARD);
     } else {
-        redirect(`${ROUTE.LOGIN}?error=${encodeURIComponent(result.error)}`);
+        return result
+        // redirect(`${ROUTE.LOGIN}?error=${encodeURIComponent(result.error)}`);
     }
 }
 

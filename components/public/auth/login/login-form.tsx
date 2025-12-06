@@ -13,12 +13,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { loginAction } from "@/app/(public)/(auth)/login/actions"
 import { useMutation } from "@tanstack/react-query"
+import { showToast } from "@/components/ui/sonner"
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
 
   const loginMutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      await loginAction(formData)
+      const result = await loginAction(formData)
+      showToast(result.error, { variant: "error" })
     },
   })
 
