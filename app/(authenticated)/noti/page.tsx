@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import useFcmToken from "@/hooks/use-fcm-token";
+import { ROUTE } from "@/lib/routes";
 
 export default function Home() {
     const { token, notificationPermissionStatus } = useFcmToken();
@@ -16,7 +17,7 @@ export default function Home() {
                 token: token,
                 title: "Test Notification",
                 message: "This is a test notification",
-                link: "/contact",
+                link: ROUTE.DASHBOARD,
             }),
         });
 

@@ -5,6 +5,7 @@ import { onMessage, Unsubscribe } from "firebase/messaging";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { saveFcmToken } from "@/app/actions/notifications";
 
 async function getNotificationPermissionAndToken() {
     // Step 1: Check if Notifications are supported in the browser.
@@ -80,6 +81,7 @@ const useFcmToken = () => {
         setNotificationPermissionStatus(Notification.permission);
         setToken(token);
         isLoading.current = false;
+        await saveFcmToken(token);
     };
 
     useEffect(() => {
