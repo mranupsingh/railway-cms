@@ -1,7 +1,6 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { getMessaging, getToken, isSupported } from "firebase/messaging";
 
-// Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAJQ8IgAM-FJtVNFnXpfpRy545r0i30MfY",
   authDomain: "push-notification-380ed.firebaseapp.com",

@@ -1,5 +1,6 @@
 import { getAuthToken, decrypt } from "@/app/(public)/(auth)/actions";
 import prisma from "@/lib/db/prisma";
+import { ROUTE } from "./routes";
 
 export type AuditAction = 'CREATE' | 'UPDATE' | 'DELETE';
 
@@ -88,6 +89,43 @@ export async function logUserActivity(params: AuditLogParams) {
                 details: params.details,
             },
         });
+
+        // Send notification to other users
+        const otherUsersTokens = await (prisma as any).user_fcm_tokens.findMany({
+            where: {
+                user_id: {
+                    not: String(userId)
+                }
+            },
+            select: {
+                token: true
+            }
+        });
+
+        if (otherUsersTokens.length > 0) {
+            const admin = (await import("@/lib/firebase-admin")).initFirebaseAdmin();
+            const tokens = otherUsersTokens.map((t: any) => t.token);
+
+            // Send to each token (using sendMulticast would be better but looping for now based on simplicity)
+            const message = `${String(userId)} performed ${params.action} on ${params.entity} ${params.entityId}`;
+
+            // We can use multicast for efficiency
+            if (tokens.length > 0) {
+                await admin.messaging().sendEachForMulticast({
+                    tokens: tokens,
+                    notification: {
+                        title: "Activity Alert",
+                        body: message,
+                    },
+                    webpush: {
+                        fcmOptions: {
+                            link: `${process.env.NEXT_PUBLIC_API_URL}${ROUTE.LOGS}` // Sending them to logs page
+                        }
+                    }
+                });
+            }
+        }
+
     } catch (error) {
         console.error('Failed to log user activity:', error);
         // Don't throw error to avoid blocking the main action
