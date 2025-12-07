@@ -27,12 +27,21 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { deleteFcmToken } from "@/app/actions/notifications"
+import useFcmToken from "@/hooks/use-fcm-token"
 import { logoutAction } from "@/app/(public)/(auth)/login/actions"
 import { getInitials } from "@/lib/utils"
 
 export function NavUser({ user }: { user: UserInfo }) {
-
   const { isMobile } = useSidebar()
+  const { token } = useFcmToken()
+
+  const handleLogout = async () => {
+    if (token) {
+      await deleteFcmToken(token)
+    }
+    await logoutAction()
+  }
 
   return (
     <SidebarMenu>
@@ -86,9 +95,7 @@ export function NavUser({ user }: { user: UserInfo }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => {
-              logoutAction()
-            }}>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
