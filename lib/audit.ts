@@ -104,18 +104,35 @@ export async function logUserActivity(params: AuditLogParams) {
 
         if (otherUsersTokens.length > 0) {
             const admin = (await import("@/lib/firebase-admin")).initFirebaseAdmin();
-            const tokens = otherUsersTokens.map((t: any) => t.token);
+            // Use Set to ensure uniqueness, though DB constraint should handle it
+            const uniqueTokens = new Set(otherUsersTokens.map((t: any) => t.token));
+            const tokens = Array.from(uniqueTokens) as string[];
 
-            // Send to each token (using sendMulticast would be better but looping for now based on simplicity)
-            const message = `${String(userId)} performed ${params.action} on ${params.entity} ${params.entityId}`;
+            // Fetch user details for better message
+            let userName = String(userId);
+            try {
+                const user = await (prisma as any).users.findUnique({
+                    where: {
+                        login_id: String(userId)
+                    }
+                });
+                if (user) {
+                    userName = user.username || user.login_id;
+                }
+            } catch (e) {
+                console.warn("Could not fetch user details for notification");
+            }
+
+            const title = `${params.action} on ${params.entity} - ${params.entityId}`;
+            const body = `${userName} performed this action at ${new Date().toLocaleTimeString()}`;
 
             // We can use multicast for efficiency
             if (tokens.length > 0) {
                 await admin.messaging().sendEachForMulticast({
                     tokens: tokens,
                     notification: {
-                        title: "Activity Alert",
-                        body: message,
+                        title: title,
+                        body: body,
                     },
                     webpush: {
                         fcmOptions: {

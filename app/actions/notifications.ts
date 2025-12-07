@@ -38,3 +38,17 @@ export async function saveFcmToken(token: string) {
         return { success: false, error: "Failed to save token" };
     }
 }
+
+export async function deleteFcmToken(token: string) {
+    try {
+        await prisma.user_fcm_tokens.delete({
+            where: {
+                token: token,
+            },
+        });
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting FCM token:", error);
+        return { success: false, error: "Failed to delete token" };
+    }
+}

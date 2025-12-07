@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/authenticated/components/app-sidebar"
 import {
     SidebarProvider
 } from "@/components/ui/sidebar"
+import { NotificationProvider } from "@/components/providers/notification-provider"
 
 export default async function AuthenticatedLayout({
     children,
@@ -24,8 +25,10 @@ export default async function AuthenticatedLayout({
                 } as React.CSSProperties
             }
         >
-            <AppSidebar variant="inset" userInfo={userInfo} />
-            {children}
+            <NotificationProvider>
+                <AppSidebar variant="inset" userInfo={userInfo} />
+                {children}
+            </NotificationProvider>
         </SidebarProvider>
     )
 }
