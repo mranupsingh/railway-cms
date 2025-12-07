@@ -135,20 +135,65 @@ export async function getCoaches({
     }
 }
 
-export async function getShopStatistics() {
-    const coaches = await prisma.coach_master.findMany({
-        where: {
-            pohby: "PL",
-        },
-        select: {
-            code: true,
-            lhbnlhb: true,
-            acnac: true,
-        },
-    })
+export async function getDetailedStatistics(type: "PL" | "YD" | "MASTER" | "HISTORY") {
+    let coaches: any[] = []
+
+    if (type === "HISTORY") {
+        const historyCoaches = await prisma.history.findMany({
+            distinct: ['COACHNO'], // Count only distinct coaches
+            select: {
+                LHBNLHB: true,
+                ACNAC: true,
+            },
+        })
+        // Map uppercase fields to standard structure
+        coaches = historyCoaches.map(c => ({
+            lhbnlhb: c.LHBNLHB,
+            acnac: c.ACNAC,
+            shop: null
+        }))
+    } else {
+        const where: any = {}
+        if (type === "PL") {
+            where.pohby = "PL"
+        } else if (type === "YD") {
+            where.pohby = "YD"
+        }
+        // MASTER has no filter (get all)
+
+        coaches = await prisma.coach_master.findMany({
+            where,
+            select: {
+                lhbnlhb: true,
+                acnac: true,
+                shop: true, // Only relevant for PL, but included for type consistency
+            },
+        })
+    }
 
     const total = coaches.length
-    const codeWiseCount: Record<string, number> = {}
+
+    // Initialize shop wise counts (Only populated for PL)
+    const shopMap: Record<string, string> = {
+        "1": "CR-1",
+        "2": "CR-2",
+        "ACC1": "ACC-1",
+        "ACC2": "ACC-2"
+    }
+
+    const shopWiseCount: Record<string, {
+        lhbAc: number,
+        lhbNac: number,
+        icfAc: number,
+        icfNac: number,
+        total: number
+    }> = {
+        "CR-1": { lhbAc: 0, lhbNac: 0, icfAc: 0, icfNac: 0, total: 0 },
+        "CR-2": { lhbAc: 0, lhbNac: 0, icfAc: 0, icfNac: 0, total: 0 },
+        "ACC-1": { lhbAc: 0, lhbNac: 0, icfAc: 0, icfNac: 0, total: 0 },
+        "ACC-2": { lhbAc: 0, lhbNac: 0, icfAc: 0, icfNac: 0, total: 0 },
+    }
+
     let lhbCount = 0
     let icfCount = 0
     let lhbAcCount = 0
@@ -157,9 +202,17 @@ export async function getShopStatistics() {
     let icfNacCount = 0
 
     coaches.forEach((coach) => {
-        // Code wise count
-        const code = coach.code || "Unknown"
-        codeWiseCount[code] = (codeWiseCount[code] || 0) + 1
+        // Determine Shop Name using map or fallback to "Other"
+        // Only calculate shop sats for PL type
+        let shopName = "Other"
+        if (type === "PL" && coach.shop && shopMap[coach.shop]) {
+            shopName = shopMap[coach.shop]
+        }
+
+        // Initialize dynamic shop entry if needed (though we predefined the main ones)
+        if (type === "PL" && !shopWiseCount[shopName] && shopName !== "Other") {
+            shopWiseCount[shopName] = { lhbAc: 0, lhbNac: 0, icfAc: 0, icfNac: 0, total: 0 }
+        }
 
         // LHB vs ICF
         const isLhb = coach.lhbnlhb === "Y"
@@ -167,22 +220,28 @@ export async function getShopStatistics() {
             lhbCount++
             if (coach.acnac === "AC") {
                 lhbAcCount++
+                if (type === "PL" && shopName !== "Other") shopWiseCount[shopName].lhbAc++
             } else {
                 lhbNacCount++
+                if (type === "PL" && shopName !== "Other") shopWiseCount[shopName].lhbNac++
             }
         } else {
             icfCount++
             if (coach.acnac === "AC") {
                 icfAcCount++
+                if (type === "PL" && shopName !== "Other") shopWiseCount[shopName].icfAc++
             } else {
                 icfNacCount++
+                if (type === "PL" && shopName !== "Other") shopWiseCount[shopName].icfNac++
             }
         }
+
+        if (type === "PL" && shopName !== "Other") shopWiseCount[shopName].total++
     })
 
     return {
         total,
-        codeWiseCount,
+        shopWiseCount,
         lhbCount,
         icfCount,
         lhbAcCount,

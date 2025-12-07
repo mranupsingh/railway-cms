@@ -71,10 +71,10 @@ export async function handleServerAction<T>(
         }
 
         const errorMessage = isApiError(error)
-            ? error.error
-            : error?.message || 'An unexpected error occurred';
+            ? error.data.error
+            : error.data.error || error?.message || 'An unexpected error occurred';
 
-        const status = isApiError(error) ? error.status : 500;
+        const status = isApiError(error) ? error.data.status : 500;
 
         console.error(`Server Action Error${errorContext ? ` [${errorContext}]` : ''}:`, {
             type: isApiError(error) ? 'API_ERROR' : 'UNKNOWN_ERROR',
