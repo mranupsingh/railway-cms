@@ -16,24 +16,15 @@ export default async function LoginLayout({
     const theme = cookieStore.get("theme")?.value || "light"
 
     return (
-        <SidebarProvider
-            defaultOpen={defaultOpen}
-            style={
-                {
-                    "--sidebar-width": "calc(var(--spacing) * 72)",
-                } as React.CSSProperties
-            }
-        >
-            <SidebarInset>
-                <header className="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
-                    <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
-                        <div className="ml-auto">
-                            <ThemeToggle currentTheme={theme} />
-                        </div>
+        <>
+            <header className="bg-muted group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-[60px] shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
+                <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
+                    <div className="ml-auto">
+                        <ThemeToggle currentTheme={theme} />
                     </div>
-                </header>
-                <div className="flex flex-1 flex-col">{children}</div>
-            </SidebarInset>
-        </SidebarProvider>
+                </div>
+            </header>
+            <div className="flex flex-1 flex-col h-[calc(100vh-60px)]">{children}</div>
+        </>
     )
 }

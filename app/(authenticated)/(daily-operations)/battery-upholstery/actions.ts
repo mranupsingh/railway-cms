@@ -33,6 +33,7 @@ export async function updateBatteryUpholsteryStatus(data: UpdateBatteryUpholster
     }, 'updateBatteryUpholsteryStatus', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Update Battery/Upholstery Status',
         entityId: data.coachNos.join(','),
         getOldData: async () => {
             try {

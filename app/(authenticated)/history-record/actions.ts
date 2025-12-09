@@ -42,6 +42,7 @@ export async function updateHistory(id: string, data: Partial<any>): Promise<Api
     }, 'updateHistoryAction', {
         action: 'UPDATE',
         entity: 'HISTORY',
+        operationName: 'Update History Record',
         entityId: id,
         getOldData: async () => {
             try {

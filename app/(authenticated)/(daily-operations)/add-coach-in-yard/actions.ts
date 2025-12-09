@@ -17,6 +17,7 @@ export async function addCoachToYard(data: AddCoachInYardRequest): Promise<ApiAc
     }, 'addCoachToYardAction', {
         action: 'CREATE',
         entity: 'COACH_MASTER', // or specific table if known
+        operationName: 'Add Coach in Yard',
         entityId: data.coachno,
         getOldData: async () => null,
         getNewData: (result) => result,

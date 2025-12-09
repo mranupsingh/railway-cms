@@ -73,8 +73,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                   <Input
                     name="email"
                     id="email"
-                    defaultValue={"admin@test.com"}
-                    placeholder="m@example.com"
+                    defaultValue={"anup@pschedule.in"}
+                    placeholder="your-name@pschedule.in"
                     required
                   />
                 </div>
@@ -88,7 +88,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                       Forgot your password?
                     </a>
                   </div>
-                  <Input name="password" id="password" type="password" defaultValue={"admin123"} />
+                  <Input name="password" id="password" type="password" defaultValue={""} />
                 </div>
                 <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
                   {loginMutation.isPending ? (

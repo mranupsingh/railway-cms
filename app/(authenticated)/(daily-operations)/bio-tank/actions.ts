@@ -34,6 +34,7 @@ export async function updateBioTankDates(data: UpdateBioTankDatesRequest): Promi
     }, 'updateBioTankDatesAction', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Update Bio Tank Dates',
         entityId: data.coachNos.join(','),
         getOldData: async () => {
             try {

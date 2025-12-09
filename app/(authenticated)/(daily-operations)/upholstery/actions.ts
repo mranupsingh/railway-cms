@@ -34,6 +34,7 @@ export async function updateUpholsteryDates(data: UpdateUpholsteryDatesRequest):
     }, 'updateUpholsteryDatesAction', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Update Upholstery Dates',
         entityId: data.coachNos.join(','),
         getOldData: async () => {
             try {

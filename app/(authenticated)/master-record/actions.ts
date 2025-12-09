@@ -42,6 +42,7 @@ export async function updateCoachMaster(coachno: string, data: Partial<any>): Pr
     }, 'updateMasterDataAction', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Update Master Record',
         entityId: coachno,
         getOldData: async () => {
             try {

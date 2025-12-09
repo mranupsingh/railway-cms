@@ -34,6 +34,7 @@ export async function updateElectricNtxrDates(data: UpdateElectricNtxrDatesReque
     }, 'updateElectricNtxrDatesAction', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Update Electric/NTXR Dates',
         entityId: data.coachNos.join(','),
         getOldData: async () => {
             try {

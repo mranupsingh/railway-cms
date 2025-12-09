@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
             {
                 userId: user.id,
                 loginId: user.login_id,
+                username: user.username,
                 email: user.email,
             },
             jwtSecret,

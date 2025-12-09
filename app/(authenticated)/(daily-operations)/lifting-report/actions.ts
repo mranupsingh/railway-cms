@@ -29,6 +29,7 @@ export async function updateLiftingReport(data: UpdateLiftingReportRequest): Pro
     }, 'updateLiftingReportAction', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Update Lifting Report',
         entityId: data.coachno,
         getOldData: async () => {
             try {
