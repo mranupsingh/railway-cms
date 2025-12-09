@@ -8,6 +8,7 @@ export interface AuditLogParams {
     action: AuditAction;
     entity: string;
     entityId: string;
+    operationName?: string;
     oldData?: any;
     newData?: any;
     details?: string;
@@ -74,13 +75,14 @@ export async function logUserActivity(params: AuditLogParams) {
             console.warn('Audit log skipped: Invalid token');
             return;
         }
-        const userId = payload.userId || payload.email || payload.userId || 'unknown';
+        const userId = payload.userId
 
         const { oldDiff, newDiff } = calculateDiff(params.oldData, params.newData);
 
         await (prisma as any).user_activity_logs.create({
             data: {
                 user_id: String(userId),
+                user_name: String(payload.username || payload.loginId || payload.email || payload.userId),
                 action: params.action,
                 entity: params.entity,
                 entity_id: params.entityId,
@@ -123,20 +125,20 @@ export async function logUserActivity(params: AuditLogParams) {
                 console.warn("Could not fetch user details for notification");
             }
 
-            const title = `${params.action} on ${params.entity} - ${params.entityId}`;
-            const body = `${userName} performed this action at ${new Date().toLocaleTimeString()}`;
+            const title = `${params.operationName}`;
+            const body = `${params.entityId} ${params.operationName} by ${userName} at ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}`;
 
-            // We can use multicast for efficiency
             if (tokens.length > 0) {
                 await admin.messaging().sendEachForMulticast({
                     tokens: tokens,
                     notification: {
                         title: title,
                         body: body,
+                        imageUrl: "https://images.unsplash.com/photo-1474487548417-781cb714c223?auto=format&fit=crop&w=400&q=80",
                     },
                     webpush: {
                         fcmOptions: {
-                            link: `${process.env.NEXT_PUBLIC_API_URL}${ROUTE.LOGS}` // Sending them to logs page
+                            link: ROUTE.LOGS
                         }
                     }
                 });

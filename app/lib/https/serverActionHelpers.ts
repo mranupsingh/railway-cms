@@ -19,6 +19,7 @@ export interface AuditOptions<T> {
     action: AuditAction;
     entity: string;
     entityId: string | ((result: T) => string);
+    operationName?: string;
     getOldData?: () => Promise<any>;
     getNewData?: (result: T) => Promise<any> | any;
     details?: string;
@@ -55,6 +56,7 @@ export async function handleServerAction<T>(
                     action: auditOptions.action,
                     entity: auditOptions.entity,
                     entityId,
+                    operationName: auditOptions.operationName,
                     oldData,
                     newData,
                     details: auditOptions.details

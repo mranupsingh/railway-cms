@@ -82,7 +82,7 @@ model coach_master {
   lightload  String?
   utkrisht   String?
   lavupgrade String?
-  ventury    Float?
+  ventury    DateTime? @db.Date
   upholstry  String?
   dyno       String?
   cmm_depot  String?
@@ -239,19 +239,6 @@ model route_access_control {
   updated_at      DateTime? @default(now()) @db.Timestamp(6)
 }
 
-model users {
-  id         Int       @id @default(autoincrement())
-  login_id   String    @unique @db.VarChar(255)
-  username   String    @db.VarChar(255)
-  password   String    @db.VarChar(255)
-  email      String?   @unique @db.VarChar(255)
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  updated_at DateTime? @default(now()) @db.Timestamp(6)
-
-  @@index([email], map: "idx_users_email")
-  @@index([login_id], map: "idx_users_login_id")
-}
-
 model user_activity_logs {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user_id    String   @db.VarChar(255)
@@ -263,18 +250,31 @@ model user_activity_logs {
   details    String?
   created_at DateTime @default(now()) @db.Timestamp(6)
 
-  @@index([user_id], map: "idx_activity_user_id")
-  @@index([entity], map: "idx_activity_entity")
   @@index([created_at], map: "idx_activity_created_at")
+  @@index([entity], map: "idx_activity_entity")
+  @@index([user_id], map: "idx_activity_user_id")
 }
 
 model user_fcm_tokens {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id    String   @db.VarChar(255)
-  token      String   @unique
-  device_type String? @db.VarChar(50)
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String   @db.VarChar(255)
+  token       String   @unique
+  device_type String?  @db.VarChar(50)
+  created_at  DateTime @default(now()) @db.Timestamp(6)
+  updated_at  DateTime @default(now()) @db.Timestamp(6)
 
   @@index([user_id], map: "idx_fcm_user_id")
+}
+
+model users {
+  id         Int       @id @default(autoincrement())
+  login_id   String    @unique @db.VarChar(255)
+  username   String    @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  email      String?   @unique @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+
+  @@index([email], map: "idx_users_email")
+  @@index([login_id], map: "idx_users_login_id")
 }

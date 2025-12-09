@@ -33,6 +33,7 @@ export async function removeCoachesFromYard(data: RemoveCoachesFromYardRequest):
     }, 'removeCoachesFromYardAction', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Remove Coach from Yard',
         entityId: data.coaches.map(c => c.coachno).join(','),
         getOldData: async () => {
             try {

@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 
+import { useQuery } from "@tanstack/react-query"
 import {
   getDetailedStatistics,
 } from "@/app/(authenticated)/dashboard/actions"
@@ -42,26 +43,17 @@ export interface SectionCardsProps {
 export function SectionCards({ stats }: SectionCardsProps) {
   // Dialog states
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [shopStats, setShopStats] = useState<any>(null)
   const [selectedCard, setSelectedCard] = useState<"PL" | "YD" | "MASTER" | "HISTORY" | null>(null)
 
-  const fetchDetailedStats = async (type: "PL" | "YD" | "MASTER" | "HISTORY") => {
-    setLoading(true)
-    try {
-      const data = await getDetailedStatistics(type)
-      setShopStats(data)
-    } catch (error) {
-      console.error("Failed to fetch statistics:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data: shopStats, isLoading: loading } = useQuery({
+    queryKey: ["detailed-statistics", selectedCard],
+    queryFn: () => getDetailedStatistics(selectedCard!),
+    enabled: !!selectedCard && open,
+  })
 
   const handleCardClick = (type: "PL" | "YD" | "MASTER" | "HISTORY") => {
     setSelectedCard(type)
     setOpen(true)
-    fetchDetailedStats(type)
   }
 
   const getDialogTitle = () => {

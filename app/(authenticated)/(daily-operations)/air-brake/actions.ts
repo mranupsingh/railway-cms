@@ -21,6 +21,7 @@ export async function updateAirBrakeDate(data: UpdateAirBrakeDateRequest): Promi
     }, 'updateAirBrakeDateAction', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Update Air Brake Date',
         entityId: data.coachNos.join(','),
         getOldData: async () => {
             try {

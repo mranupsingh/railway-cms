@@ -44,6 +44,7 @@ export async function updateRLiftingDate(data: UpdateRLiftingDateRequest): Promi
     }, 'updateRLiftingDateAction', {
         action: 'UPDATE',
         entity: 'COACH_MASTER',
+        operationName: 'Update R-Lifting Date',
         entityId: data.coachNos.join(','),
         getOldData: async () => {
             try {
